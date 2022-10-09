@@ -4,14 +4,16 @@ class Main_char:
     def __init__(self):
         self.image = load_image('rockman_sprite.png')
         self.x, self.y = 100, 90
+        self.hp = 100
         self.dir = 0            # -1왼쪽 +1 오른쪽방향
-        self.jump = 0           # 0 점프안함 1 점프상태
         self.frame = 0          # 애니메이션 프레임
         self.attack = 0         # 공격하고 있는지 아닌지 z키가 공격
         self.stand = 1          # -1 왼쪽 +1 오른쪽 방향
+        self.jump = 0  # 0 점프안함 1 점프상태
         self.jump_dis = 0
         self.jump_on = 0
         self.jump_max = 100
+        self.death = 0
         self.on = True          # esc키 누르면 false 되서 반복문 종료
 
     def move(self):             # 실질적인 x,y좌표 바꾸는 함수
@@ -124,7 +126,8 @@ class Main_char:
                     self.dir = -1
                     self.stand = -1
                 elif event.key == SDLK_ESCAPE:
-                    self.on = False
+                    # self.on = False
+                    self.hp = 0
                 if event.key == SDLK_z:
                     self.attack = 1
                 if event.key == SDLK_c:
@@ -136,4 +139,22 @@ class Main_char:
                     self.dir = 0
                 if event.key == SDLK_z:
                     self.attack = 0
-        self.move()
+        if(self.hp != 0):
+            self.move()
+        self.dead()
+
+    def dead(self):
+        if self.hp == 0:
+            self.dead_ani()
+
+    def dead_ani(self):
+        if self.dir == 1 or self.stand == 1:
+            self.image.clip_draw(self.death * 32, 32 * 8, 32, 32, self.x, self.y, 100, 100)
+            self.death = (self.death + 1) % 5
+        elif self.dir == -1 or self.stand == -1:
+            self.image.clip_draw(self.death * 32, 32 * 3, 32, 32, self.x, self.y, 100, 100)
+            self.death = (self.death + 1) % 5
+        if self.death == 4:
+            self.on = False
+        delay(0.5)
+
