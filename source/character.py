@@ -1,4 +1,5 @@
 from pico2d import*
+import game_framework
 
 class Main_char:
     def __init__(self):
@@ -17,58 +18,19 @@ class Main_char:
         self.on = True          # esc키 누르면 false 되서 반복문 종료
 
     def move(self):             # 실질적인 x,y좌표 바꾸는 함수
-        if self.dir == 1:
-            self.x += 5
-            if self.jump == 0:
-                self.run_ani()
-            elif self.jump == 1:
-                if self.jump_on == 0:
-                    self.y += 8
-                    self.jump_dis += 8
-                    if self.jump_dis == self.jump_max:
-                        self.jump_on = 1
-                else:
-                    self.y -= 8
-                    self.jump_dis -= 8
-                    if self.jump_dis == 0:
-                        self.jump_on = 0
-                        self.jump = 0
-                self.jump_ani()
-
-        elif self.dir == -1:
-            self.x -= 5
-            if self.jump == 0:
-                self.run_ani()
-            elif self.jump == 1:
-                if self.jump_on == 0:
-                    self.y += 8
-                    self.jump_dis += 8
-                    if self.jump_dis == self.jump_max:
-                        self.jump_on = 1
-                else:
-                    self.y -= 8
-                    self.jump_dis -= 8
-                    if self.jump_dis == 0:
-                        self.jump_on = 0
-                        self.jump = 0
-                self.jump_ani()
-
-        elif self.dir == 0:
-            if self.jump == 0:
-                self.idle()
-            elif self.jump == 1:
-                if self.jump_on == 0:
-                    self.y += 8
-                    self.jump_dis += 8
-                    if self.jump_dis == self.jump_max:
-                        self.jump_on = 1
-                else:
-                    self.y -= 8
-                    self.jump_dis -= 8
-                    if self.jump_dis == 0:
-                        self.jump_on = 0
-                        self.jump = 0
-                self.jump_ani()
+        self.x += 5 * self.dir
+        if self.jump == 1:
+            if self.jump_on == 0:
+                self.y += 8
+                self.jump_dis += 8
+                if self.jump_dis == self.jump_max:
+                    self.jump_on = 1
+            else:
+                self.y -= 16
+                self.jump_dis -= 16
+                if self.jump_dis == 0:
+                    self.jump_on = 0
+                    self.jump = 0
 
     def idle(self):             # 서있는 애니메이션 출력하는 함수
         if self.stand == 1:
@@ -154,7 +116,72 @@ class Main_char:
         elif self.dir == -1 or self.stand == -1:
             self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
             self.death = (self.death + 1) % 40
-        if self.death == 39:
-            self.on = False
         delay(0.01)
+
+def handle_events():
+    global running
+    events = get_events()
+    for event in events:
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_RIGHT:
+                rockman.dir = 1
+                rockman.stand = 1
+            elif event.key == SDLK_LEFT:
+                rockman.dir = -1
+                rockman.stand = -1
+            elif event.key == SDLK_ESCAPE:
+                # self.on = False
+                rockman.hp = 0
+            if event.key == SDLK_z:
+                rockman.attack = 1
+            if event.key == SDLK_c:
+                rockman.jump = 1
+        if event.type == SDL_KEYUP:
+            if event.key == SDLK_RIGHT:
+                rockman.dir = 0
+            if event.key == SDLK_LEFT:
+                rockman.dir = 0
+            if event.key == SDLK_z:
+                rockman.attack = 0
+
+rockman = None
+running = True
+
+def enter():
+    global rockman, running
+    rockman = Main_char()
+    running = True
+
+def exit():
+    global rockman
+    del rockman
+
+def update():
+    rockman.move()
+
+
+def draw():
+    clear_canvas()
+    draw_char()
+    update_canvas()
+
+def draw_char():
+    if rockman.hp != 0:
+        if rockman.jump == 0:
+            if rockman.dir == 0:
+                rockman.idle()
+            else:
+                rockman.run_ani()
+
+        elif rockman.jump == 1:
+            rockman.jump_ani()
+    else:
+        rockman.dead_ani()
+        if rockman.death == 39:
+            game_framework.quit()
+def pause():
+    pass
+
+def resume():
+    pass
 

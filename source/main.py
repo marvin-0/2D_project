@@ -1,19 +1,9 @@
 from pico2d import*
-from character import *
+import character
 from monster1 import *
+import  game_framework
 
 open_canvas()
-
-rockman = Main_char()
-monster1 = Monster_I()
-
-while rockman.on:
-    clear_canvas()
-    rockman.move_dir()
-    monster1.draw()
-    monster1.update()
-    update_canvas()
-
-
+game_framework.run(character)
 close_canvas()
 
