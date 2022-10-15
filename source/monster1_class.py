@@ -9,9 +9,9 @@ class Monster_I:
 
     def draw(self):
         if self.dir == 1:
-            self.image.clip_draw(self.frame * 45, 35 * 1, 45, 35, self.x, self.y, 100, 100)
+            self.image.clip_draw(self.frame * 45, 35 * 1, 45, 35, self.x, self.y, 50, 50)
         elif self.dir == -1:
-            self.image.clip_draw(self.frame * 45, 35 * 3, 45, 35, self.x, self.y, 100, 100)
+            self.image.clip_draw(self.frame * 45, 35 * 3, 45, 35, self.x, self.y, 50, 50)
 
     def update(self):
         self.frame = (self.frame + 1) % 2
@@ -22,4 +22,8 @@ class Monster_I:
         elif self.x < 0:
             self.x = 0
             self.dir = 1
-        delay(0.01)
+
+    def __del__(self):
+        pass
+    def dead(self):
+        del self

@@ -14,7 +14,7 @@ class Bullet:
 
     def update(self):
         self.x += self.speed * self.dir
-        if self.x > 800:
+        if self.x > 500:
             del self
         elif self.x < 0:
             del self

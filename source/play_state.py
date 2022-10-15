@@ -5,7 +5,7 @@ import monster1_class
 import bullet_class
 
 rockman = None
-monster1 = None
+monster1 = []
 running = True
 bullet = None
 
@@ -39,7 +39,7 @@ def handle_events():
 def enter():
     global rockman, running, monster1, bullet
     rockman = character_class.Main_char()
-    monster1 = monster1_class.Monster_I()
+    monster1.append(monster1_class.Monster_I())
     bullet = []
     running = True
 
@@ -49,10 +49,19 @@ def exit():
 
 def update():
     rockman.move()
-    monster1.update()
+    for m in monster1:
+        m.update()
     for b in bullet:
         b.update()
+    bm_clash()
 
+def bm_clash():
+    for m in monster1[:]:
+        for b in bullet[:]:
+            if b.x < m.x + 50 and b.x > m.x - 50:
+                if b.y < m.y + 50 and b.y > m.y - 50:
+                    monster1.remove(m)
+                    bullet.remove(b)
 
 def draw():
     clear_canvas()
@@ -73,9 +82,11 @@ def draw_char():
         rockman.dead_ani()
         if rockman.death == 39:
             game_framework.quit()
-    monster1.draw()
+    for m in monster1:
+        m.draw()
     for b in bullet:
         b.draw()
+
 
 def pause():
     pass
