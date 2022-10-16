@@ -33,10 +33,11 @@ def handle_events():
                 # self.on = False
                 rockman.hp = 0
             if event.key == SDLK_z:
-                rockman.attack = 1
-                if bullet_count < 5:
-                    bullet.append(bullet_class.Bullet())
-                    bullet_count += 1
+                if rockman.hit == 0:
+                    rockman.attack = 1
+                    if bullet_count < 5:
+                        bullet.append(bullet_class.Bullet())
+                        bullet_count += 1
             if event.key == SDLK_c:
                 rockman.jump = 1
             if event.key == SDLK_r:
