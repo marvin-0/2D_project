@@ -3,19 +3,22 @@ import game_framework
 import character_class
 import monster1_class
 import bullet_class
+import stage_class
 
 rockman = None
 monster1 = []
 running = True
 bullet = None
+stage = None
 bullet_count = 0
 
 def enter():
-    global rockman, running, monster1, bullet, bullet_count
+    global rockman, running, monster1, bullet, bullet_count, stage
     rockman = character_class.Main_char()
     monster1 = [monster1_class.Monster_I() for m in range(1)]
     bullet = []
     bullet_count = 0
+    stage = stage_class.Stage()
     running = True
 
 def handle_events():
@@ -76,6 +79,7 @@ def resume():
     pass
 
 def draw_char():
+    stage.draw()
     if rockman.hp > 0:
         if rockman.hit == 0:
             if rockman.jump == 0:
@@ -114,7 +118,7 @@ def cm_clash():
             if rockman.x > m.x - 25 and rockman.x < m.x + 25:
                 if rockman.y > m.y - 25 and rockman.y < m.y + 25:
                     rockman.hit = 1
-                    rockman.hp -= 10
+                    rockman.hp = 0
 
 def bullet_out():
     global bullet_count
