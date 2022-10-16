@@ -10,7 +10,7 @@ class Bullet:
         self.speed = 10
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.image.draw(self.x, self.y, 20, 10)
 
     def update(self):
         self.x += self.speed * self.dir

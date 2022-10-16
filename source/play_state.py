@@ -118,7 +118,7 @@ def cm_clash():
             if rockman.x > m.x - 25 and rockman.x < m.x + 25:
                 if rockman.y > m.y - 25 and rockman.y < m.y + 25:
                     rockman.hit = 1
-                    rockman.hp = 0
+                    rockman.hp -= 10
 
 def bullet_out():
     global bullet_count
