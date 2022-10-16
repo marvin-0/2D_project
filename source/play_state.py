@@ -13,7 +13,7 @@ bullet_count = 0
 def enter():
     global rockman, running, monster1, bullet, bullet_count
     rockman = character_class.Main_char()
-    monster1 = [monster1_class.Monster_I() for m in range(11)]
+    monster1 = [monster1_class.Monster_I() for m in range(1)]
     bullet = []
     bullet_count = 0
     running = True
@@ -60,6 +60,7 @@ def update():
     for b in bullet:
         b.update()
     bm_clash()
+    cm_clash()
     bullet_out()
 
 def draw():
@@ -74,19 +75,23 @@ def resume():
     pass
 
 def draw_char():
-    if rockman.hp != 0:
-        if rockman.jump == 0:
-            if rockman.dir == 0:
-                rockman.idle()
-            else:
-                rockman.run_ani()
+    if rockman.hp > 0:
+        if rockman.hit == 0:
+            if rockman.jump == 0:
+                if rockman.dir == 0:
+                    rockman.idle()
+                else:
+                    rockman.run_ani()
 
-        elif rockman.jump == 1:
-            rockman.jump_ani()
+            elif rockman.jump == 1:
+                rockman.jump_ani()
+        else:
+            rockman.hit_ani()
     else:
         rockman.dead_ani()
         if rockman.death == 39:
             game_framework.quit()
+
     for m in monster1:
         m.draw()
     for b in bullet:
@@ -101,6 +106,14 @@ def bm_clash():
                     monster1.remove(m)
                     bullet.remove(b)
                     bullet_count -= 1
+
+def cm_clash():
+    for m in monster1[:]:
+        if rockman.hit == 0:
+            if rockman.x > m.x - 25 and rockman.x < m.x + 25:
+                if rockman.y > m.y - 25 and rockman.y < m.y + 25:
+                    rockman.hit = 1
+                    rockman.hp -= 10
 
 def bullet_out():
     global bullet_count

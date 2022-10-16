@@ -4,7 +4,7 @@ class Main_char:
     def __init__(self):
         self.image = load_image('rockman_sprite.png')
         self.x, self.y = 100, 90
-        self.hp = 100
+        self.hp = 50
         self.dir = 0            # -1왼쪽 +1 오른쪽방향
         self.frame = 0          # 애니메이션 프레임
         self.attack = 0         # 공격하고 있는지 아닌지 z키가 공격
@@ -13,10 +13,12 @@ class Main_char:
         self.jump_dis = 0
         self.jump_on = 0
         self.jump_max = 160
+        self.hit = 0
         self.death = 0
 
     def move(self):             # 실질적인 x,y좌표 바꾸는 함수
-        self.x += 5 * self.dir
+        if self.hit == 0:
+            self.x += 5 * self.dir
         if self.jump == 1:
             if self.jump_on == 0:
                 self.y += 8
@@ -74,6 +76,18 @@ class Main_char:
                 self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
             elif self.attack == 1:
                 self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
+        delay(0.01)
+
+    def hit_ani(self):         # 점프하는 애니메이션 출력하는 함수
+        if self.stand == 1:
+            self.image.clip_draw(self.frame % 2 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
+            self.frame += 1
+        elif self.stand == -1:
+            self.image.clip_draw(self.frame % 2 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
+            self.frame += 1
+        if self.frame == 60:
+            self.frame = 0
+            self.hit = 0
         delay(0.01)
 
     def dead(self):
