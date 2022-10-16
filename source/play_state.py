@@ -8,9 +8,18 @@ rockman = None
 monster1 = []
 running = True
 bullet = None
+bullet_count = 0
+
+def enter():
+    global rockman, running, monster1, bullet, bullet_count
+    rockman = character_class.Main_char()
+    monster1 = [monster1_class.Monster_I() for m in range(11)]
+    bullet = []
+    bullet_count = 0
+    running = True
 
 def handle_events():
-    global running
+    global running, bullet_count, monster1, bullet
     events = get_events()
     for event in events:
         if event.type == SDL_KEYDOWN:
@@ -25,9 +34,13 @@ def handle_events():
                 rockman.hp = 0
             if event.key == SDLK_z:
                 rockman.attack = 1
-                bullet.append(bullet_class.Bullet())
+                if bullet_count < 5:
+                    bullet.append(bullet_class.Bullet())
+                    bullet_count += 1
             if event.key == SDLK_c:
                 rockman.jump = 1
+            if event.key == SDLK_r:
+                monster1 = [monster1_class.Monster_I() for m in range(11)]
         if event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 rockman.dir = 0
@@ -35,13 +48,6 @@ def handle_events():
                 rockman.dir = 0
             if event.key == SDLK_z:
                 rockman.attack = 0
-
-def enter():
-    global rockman, running, monster1, bullet
-    rockman = character_class.Main_char()
-    monster1.append(monster1_class.Monster_I())
-    bullet = []
-    running = True
 
 def exit():
     global rockman
@@ -54,19 +60,18 @@ def update():
     for b in bullet:
         b.update()
     bm_clash()
-
-def bm_clash():
-    for m in monster1[:]:
-        for b in bullet[:]:
-            if b.x < m.x + 50 and b.x > m.x - 50:
-                if b.y < m.y + 50 and b.y > m.y - 50:
-                    monster1.remove(m)
-                    bullet.remove(b)
+    bullet_out()
 
 def draw():
     clear_canvas()
     draw_char()
     update_canvas()
+
+def pause():
+    pass
+
+def resume():
+    pass
 
 def draw_char():
     if rockman.hp != 0:
@@ -87,9 +92,22 @@ def draw_char():
     for b in bullet:
         b.draw()
 
+def bm_clash():
+    global bullet_count
+    for m in monster1[:]:
+        for b in bullet[:]:
+            if b.x < m.x + 50 and b.x > m.x - 50:
+                if b.y < m.y + 50 and b.y > m.y - 50:
+                    monster1.remove(m)
+                    bullet.remove(b)
+                    bullet_count -= 1
 
-def pause():
-    pass
-
-def resume():
-    pass
+def bullet_out():
+    global bullet_count
+    for b in bullet[:]:
+        if b.x > 800:
+            bullet.remove(b)
+            bullet_count -= 1
+        elif b.x < 0:
+            bullet.remove(b)
+            bullet_count -= 1

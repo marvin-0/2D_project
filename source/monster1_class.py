@@ -1,9 +1,10 @@
 from pico2d import *
+from random import randint
 
 class Monster_I:
     def __init__(self):
         self.image = load_image('monster1.png')
-        self.x, self.y  = 500, 90
+        self.x, self.y  = randint(300, 790), 90
         self.dir = 1
         self.frame = 0
 

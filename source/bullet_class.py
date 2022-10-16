@@ -7,14 +7,11 @@ class Bullet:
         self.image = load_image('bullet.png')
         self.x, self.y = play_state.rockman.x, play_state.rockman.y
         self.dir = play_state.rockman.stand
-        self.speed = 20
+        self.speed = 10
 
     def draw(self):
         self.image.draw(self.x, self.y)
 
     def update(self):
         self.x += self.speed * self.dir
-        if self.x > 500:
-            del self
-        elif self.x < 0:
-            del self
+
