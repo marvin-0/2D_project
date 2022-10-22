@@ -13,15 +13,17 @@ bullet = None
 stage = None
 bullet_count = 0
 ground = None
+ground_amount = 0
 
 def enter():
-    global rockman, running, monster1, bullet, bullet_count, stage, ground
+    global rockman, running, monster1, bullet, bullet_count, stage, ground, ground_amount
     rockman = character_class.Main_char()
     monster1 = [monster1_class.Monster_I() for m in range(1)]
     bullet = []
     bullet_count = 0
     stage = stage_class.Stage()
-    ground = [map_class.Ground() for m in range(20)]
+    ground_amount = 100
+    ground = [map_class.Ground() for m in range(ground_amount)]
     set_ground()
     running = True
 
@@ -56,6 +58,9 @@ def handle_events():
                 rockman.dir = 0
             if event.key == SDLK_z:
                 rockman.attack = 0
+            if event.key == SDLK_c and rockman.jump_on == 0:
+                rockman.jump_on = 1
+                rockman.jump_dis = 0
 
 def exit():
     global rockman
@@ -86,8 +91,8 @@ def resume():
 
 def draw_char():
     stage.draw()
-    for g in range(15):
-        ground[g].draw()
+    for g in ground:
+        g.draw()
     for m in monster1:
         m.draw()
     for b in bullet:
@@ -138,13 +143,14 @@ def bullet_out():
             bullet_count -= 1
 def char_ground():
     global rockman
-    for i in range(16):
+    for i in range(ground_amount):
         if rockman.y - 25 <= ground[i].y + 25 and rockman.y - 25 >= ground[i].y - 25:
             if (rockman.x + 10 > ground[i].x - 25 and rockman.x + 10 < ground[i].x + 25) or (rockman.x - 10 > ground[i].x - 25 and rockman.x - 10 < ground[i].x + 25):
                 rockman.y += 4
-                if rockman.jump_on == 2:
+                if rockman.jump_on != 0:
                     rockman.jump_on = 0
                     rockman.jump = 0
+                    rockman.jump_dis = 0
         if rockman.y + 25 >= ground[i].y - 25 and rockman.y + 25 <= ground[i].y + 25:
             if (rockman.x + 10 > ground[i].x - 25 and rockman.x + 10 < ground[i].x + 25) or (rockman.x - 10 > ground[i].x - 25 and rockman.x - 10 < ground[i].x + 25):
                 if rockman.jump == 1:
@@ -166,11 +172,20 @@ def gravity():
     rockman.y -= 4
 
 def set_ground():
-    for i in range(10):
+    for i in range(9):
         ground[i].y = 25
         ground[i].x = 50 * i + 25
-    for j in range(10, 15):
-        ground[j].y = 25
-        ground[j].x = 600 + 50 * (j % 10)
-    ground[15].y = 150
-    ground[15].x = 475
+    for i in range(9, 18):
+        ground[i].y = 25
+        ground[i].x = 625 + i % 9 * 50
+    for i in range(18, 30):
+        ground[i].y = 75 + i % 18 * 50
+        ground[i].x = 975
+    for i in range(30, 50):
+        ground[i].y = 175
+        ground[i].x = 875 - i % 30 * 50
+    # ground[30].y = 175
+    # ground[30].x = 875
+
+    # ground[15].y = 150
+    # ground[15].x = 475
