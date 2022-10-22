@@ -79,7 +79,7 @@ def resume():
     pass
 
 def draw_char():
-    stage.draw()
+    #stage.draw()
     if rockman.hp > 0:
         if rockman.hit == 0:
             if rockman.jump == 0:
