@@ -21,15 +21,15 @@ class Main_char:
             self.x += 5 * self.dir
         if self.jump == 1:
             if self.jump_on == 0:
-                self.y += 8
+                self.y += 12
                 self.jump_dis += 1
                 if self.jump_dis == self.jump_max:
                     self.jump_on = 1
                     self.jump_dis = 0
             elif self.jump_on == 1:
-                self.y += 4
+                self.y += 3
                 self.jump_dis += 1
-                if self.jump_dis == 4:
+                if self.jump_dis == 6:
                     self.jump_on = 2
                     self.jump_dis = 0
 
@@ -86,7 +86,7 @@ class Main_char:
         elif self.stand == -1:
             self.image.clip_draw(self.frame % 2 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
             self.frame += 1
-        if self.frame == 60:
+        if self.frame == 50:
             self.frame = 0
             self.hit = 0
         delay(0.01)
