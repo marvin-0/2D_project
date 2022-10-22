@@ -4,6 +4,7 @@ import character_class
 import monster1_class
 import bullet_class
 import stage_class
+import map_class
 
 rockman = None
 monster1 = []
@@ -11,14 +12,17 @@ running = True
 bullet = None
 stage = None
 bullet_count = 0
+ground = None
 
 def enter():
-    global rockman, running, monster1, bullet, bullet_count, stage
+    global rockman, running, monster1, bullet, bullet_count, stage, ground
     rockman = character_class.Main_char()
     monster1 = [monster1_class.Monster_I() for m in range(1)]
     bullet = []
     bullet_count = 0
     stage = stage_class.Stage()
+    ground = [map_class.Ground() for m in range(10)]
+    set_ground()
     running = True
 
 def handle_events():
@@ -58,6 +62,8 @@ def exit():
     del rockman
 
 def update():
+    gravity()
+    char_ground()
     rockman.move()
     for m in monster1:
         m.update()
@@ -101,6 +107,8 @@ def draw_char():
         m.draw()
     for b in bullet:
         b.draw()
+    for g in ground:
+        g.draw()
 
 def bm_clash():
     global bullet_count
@@ -123,9 +131,25 @@ def cm_clash():
 def bullet_out():
     global bullet_count
     for b in bullet[:]:
-        if b.x > 800:
+        if b.x > 1000:
             bullet.remove(b)
             bullet_count -= 1
         elif b.x < 0:
             bullet.remove(b)
             bullet_count -= 1
+def char_ground():
+    global rockman
+    if rockman.y + 20 <= 90:
+        rockman.y += 4
+        if rockman.jump_on == 2:
+            rockman.jump_on = 0
+            rockman.jump = 0
+
+def gravity():
+    global rockman
+    rockman.y -= 4
+
+def set_ground():
+    for i in range(10):
+        ground[i].y = 40
+        ground[i].x = 32 * i

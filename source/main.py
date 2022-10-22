@@ -5,6 +5,6 @@ import title_state
 from monster1_class import *
 import game_framework
 
-open_canvas()
+open_canvas(1000, 900)
 game_framework.run(title_state)
 close_canvas()

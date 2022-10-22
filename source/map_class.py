@@ -3,7 +3,9 @@ from pico2d import *
 class Ground:
     def __init__(self):
         self.image = load_image('ground.png')
-        self.x, self.y
+        self.x, self.y = 2000, 1000
+    def draw(self):
+        self.image.draw(self.x, self.y)
 
 class Spike_up:
     def __init__(self):

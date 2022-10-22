@@ -12,7 +12,7 @@ class Main_char:
         self.jump = 0  # 0 점프안함 1 점프상태
         self.jump_dis = 0
         self.jump_on = 0
-        self.jump_max = 160
+        self.jump_max = 20
         self.hit = 0
         self.death = 0
 
@@ -22,15 +22,16 @@ class Main_char:
         if self.jump == 1:
             if self.jump_on == 0:
                 self.y += 8
-                self.jump_dis += 8
+                self.jump_dis += 1
                 if self.jump_dis == self.jump_max:
                     self.jump_on = 1
-            else:
-                self.y -= 16
-                self.jump_dis -= 16
-                if self.jump_dis == 0:
-                    self.jump_on = 0
-                    self.jump = 0
+                    self.jump_dis = 0
+            elif self.jump_on == 1:
+                self.y += 4
+                self.jump_dis += 1
+                if self.jump_dis == 4:
+                    self.jump_on = 2
+                    self.jump_dis = 0
 
     def idle(self):             # 서있는 애니메이션 출력하는 함수
         if self.stand == 1:
