@@ -3,6 +3,7 @@ from pico2d import*
 class Main_char:
     def __init__(self):
         self.image = load_image('rockman_sprite.png')
+        self.dead_image = load_image('game_over.png')
         self.x, self.y = 100, 90
         self.hp = 50
         self.dir = 0            # -1왼쪽 +1 오른쪽방향
@@ -96,13 +97,18 @@ class Main_char:
             self.dead_ani()
 
     def dead_ani(self):
-        if self.dir == 1 or self.stand == 1:
-            self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
-            self.death = (self.death + 1) % 40
-        elif self.dir == -1 or self.stand == -1:
-            self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
-            self.death = (self.death + 1) % 40
+        if self.death < 39:
+            if self.dir == 1 or self.stand == 1:
+                self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
+                self.death = (self.death + 1) % 40
+            elif self.dir == -1 or self.stand == -1:
+                self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
+                self.death = (self.death + 1) % 40
+        elif self.death >= 39:
+            self.game_over()
         delay(0.01)
 
+    def game_over(self):
+        self.dead_image.draw(500, 450)
 
 

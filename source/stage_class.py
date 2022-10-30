@@ -2,7 +2,7 @@ from pico2d import *
 
 class Stage:
     def __init__(self):
-        self.image = load_image('stage_cut.png')
+        self.image = load_image('map.png')
 
     def draw(self):
-        self.image.draw(400, 300, 900, 600)
+        self.image.draw(500, 450)
