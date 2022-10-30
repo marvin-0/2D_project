@@ -218,7 +218,7 @@ def set_ground():
     ground[57].y = 175 + 250
     ground[57].x = 875 - 550
     ground[58].y = 175 + 200
-    ground[58].x = 875 - 550
+    ground[58].x = 875 - 850
 
     for i in range(16):
         spike_up[i].y = 225
