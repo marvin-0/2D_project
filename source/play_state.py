@@ -36,10 +36,10 @@ def handle_events():
     for event in events:
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
-                rockman.dir = 1
+                rockman.dir += 1
                 rockman.stand = 1
             elif event.key == SDLK_LEFT:
-                rockman.dir = -1
+                rockman.dir += -1
                 rockman.stand = -1
             elif event.key == SDLK_ESCAPE:
                 game_framework.push_state(pause_state)
@@ -62,9 +62,9 @@ def handle_events():
 
         if event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
-                rockman.dir = 0
+                rockman.dir -= 1
             if event.key == SDLK_LEFT:
-                rockman.dir = 0
+                rockman.dir += 1
             if event.key == SDLK_z:
                 rockman.attack = 0
             if event.key == SDLK_c and rockman.jump_on == 0:
