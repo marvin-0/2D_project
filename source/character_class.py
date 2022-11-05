@@ -1,7 +1,7 @@
 from pico2d import*
 
 RD, LD, RU, LU, ZD, ZU, CD, CU, HP = range(9)
-event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU']
+event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU', 'HP']
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RD,
@@ -25,6 +25,8 @@ class IDLE:
 
     @staticmethod
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         self.frame = (self.frame + 1) % 30
     @staticmethod
     def draw(self):
@@ -49,6 +51,8 @@ class RUN:
         self.face_dir = self.dir
 
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         self.frame = (self.frame + 1) % 40
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
@@ -69,6 +73,8 @@ class ATK_IDLE:
         print('EXIT ATK_IDLE')
 
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         pass
     def draw(self):
         if self.face_dir == 1:
@@ -92,6 +98,8 @@ class ATK_RUN:
         self.face_dir = self.dir
 
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         self.frame = (self.frame + 1) % 40
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
@@ -124,6 +132,8 @@ class JUMP:
             self.jump_dis = 0
 
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         if self.jump == 1:
             if self.jump_on == 0:
                 self.y += 12
@@ -153,7 +163,7 @@ class JUMP:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 class ATK_JUMP:
     def enter(self, event):
-        print('ENTER JUMP')
+        print('ENTER ATK_JUMP')
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -166,7 +176,7 @@ class ATK_JUMP:
             self.jump = 1
 
     def exit(self, event):
-        print('EXIT JUMP')
+        print('EXIT ATK_JUMP')
         if self.dir != 0:
             self.face_dir = self.dir
         if event == CU and self.jump_on == 0:
@@ -174,6 +184,8 @@ class ATK_JUMP:
             self.jump_dis = 0
 
     def do(self):
+        if self.hp <= 0:
+            self.add_event(HP)
         if self.jump == 1:
             if self.jump_on == 0:
                 self.y += 12
@@ -201,13 +213,37 @@ class ATK_JUMP:
             self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
         elif self.face_dir == -1:
             self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
+
+class DEATH:
+    @staticmethod
+    def enter(self,event):
+        print('ENTER IDLE')
+
+    @staticmethod
+    def exit(self, event):
+        print('EXIT IDLE')
+
+    @staticmethod
+    def do(self):
+        if self.death < 39:
+            self.death = (self.death + 1) % 40
+    @staticmethod
+    def draw(self):
+        if self.face_dir == 1:
+            self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
+        else:
+            self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
+        if self.death >= 39:
+            self.dead_image.draw(500, 450)
+
 next_state = {
-    IDLE:   {RU: RUN, LU: RUN, RD: RUN, LD: RUN, ZD: ATK_IDLE, ZU: IDLE, CD: JUMP, CU: IDLE},
-    RUN:    {RU: IDLE, LU: IDLE, LD: IDLE, RD: IDLE, ZD: ATK_RUN, ZU: RUN, CD: JUMP, CU: RUN},
-    ATK_IDLE: {RU: ATK_RUN, LU: ATK_RUN, RD: ATK_RUN, LD: ATK_RUN, ZD: ATK_IDLE, ZU: IDLE, CD: ATK_JUMP, CU: ATK_IDLE},
-    ATK_RUN: {RU: ATK_IDLE, LU: ATK_IDLE, RD: ATK_IDLE, LD: ATK_IDLE, ZD: ATK_RUN, ZU: RUN, CD: ATK_JUMP, CU: ATK_RUN},
-    JUMP:   {RU: JUMP, LU: JUMP, RD: JUMP, LD: JUMP, ZD: ATK_JUMP, CD: JUMP, CU: JUMP},
-    ATK_JUMP: {RU: ATK_JUMP, LU: ATK_JUMP, RD: ATK_JUMP, LD: ATK_JUMP, ZD: ATK_JUMP, ZU: JUMP, CD: ATK_JUMP, CU: ATK_JUMP}
+    IDLE:   {RU: RUN, LU: RUN, RD: RUN, LD: RUN, ZD: ATK_IDLE, ZU: IDLE, CD: JUMP, CU: IDLE, HP: DEATH},
+    RUN:    {RU: IDLE, LU: IDLE, LD: IDLE, RD: IDLE, ZD: ATK_RUN, ZU: RUN, CD: JUMP, CU: RUN, HP: DEATH},
+    ATK_IDLE: {RU: ATK_RUN, LU: ATK_RUN, RD: ATK_RUN, LD: ATK_RUN, ZD: ATK_IDLE, ZU: IDLE, CD: ATK_JUMP, CU: ATK_IDLE, HP: DEATH},
+    ATK_RUN: {RU: ATK_IDLE, LU: ATK_IDLE, RD: ATK_IDLE, LD: ATK_IDLE, ZD: ATK_RUN, ZU: RUN, CD: ATK_JUMP, CU: ATK_RUN, HP: DEATH},
+    JUMP:   {RU: JUMP, LU: JUMP, RD: JUMP, LD: JUMP, ZD: ATK_JUMP, CD: JUMP, CU: JUMP, HP: DEATH},
+    ATK_JUMP: {RU: ATK_JUMP, LU: ATK_JUMP, RD: ATK_JUMP, LD: ATK_JUMP, ZD: ATK_JUMP, ZU: JUMP, CD: ATK_JUMP, CU: ATK_JUMP, HP: DEATH},
+    DEATH: {RU: DEATH, LU: DEATH, RD: DEATH, LD: DEATH, ZD: DEATH, ZU: DEATH, CD: DEATH, CU: DEATH}
 }
 
 class Main_char:

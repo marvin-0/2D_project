@@ -8,7 +8,7 @@ import map_class
 import pause_state
 
 rockman = None
-monster1 = []
+
 running = True
 bullet = None
 stage = None
@@ -18,9 +18,8 @@ ground_amount = 0
 spike_up = None
 
 def enter():
-    global rockman, running, monster1, bullet, bullet_count, stage, ground, ground_amount, spike_up
+    global rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
     rockman = character_class.Main_char()
-    monster1 = [monster1_class.Monster_I() for m in range(1)]
     bullet = []
     bullet_count = 0
     stage = stage_class.Stage()
@@ -38,62 +37,24 @@ def handle_events():
             game_framework.quit()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.push_state(pause_state)
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
+            exit()
+            enter()
         else:
             rockman.handle_event(event)
-        # if event.type == SDL_KEYDOWN:
-        #     if event.key == SDLK_RIGHT:
-        #         rockman.dir += 1
-        #         rockman.stand = 1
-        #     elif event.key == SDLK_LEFT:
-        #         rockman.dir += -1
-        #         rockman.stand = -1
-        #     elif event.key == SDLK_ESCAPE:
-        #         game_framework.push_state(pause_state)
-        #     if event.key == SDLK_z:
-        #         if rockman.hit == 0:
-        #             rockman.attack = 1
-        #             if bullet_count < 5:
-        #                 bullet.append(bullet_class.Bullet())
-        #                 bullet_count += 1
-        #     if event.key == SDLK_c:
-        #         rockman.jump = 1
-        #     if event.key == SDLK_r:
-        #         exit()
-        #         enter()
-        #         # set_ground()
-        #         # rockman.y = 90
-        #         # rockman.x = 100
-        #         # rockman.hp = 50
-        #         # rockman.death = 0
-        #
-        # if event.type == SDL_KEYUP:
-        #     if event.key == SDLK_RIGHT:
-        #         rockman.dir -= 1
-        #     if event.key == SDLK_LEFT:
-        #         rockman.dir += 1
-        #     if event.key == SDLK_z:
-        #         rockman.attack = 0
-        #     if event.key == SDLK_c and rockman.jump_on == 0:
-        #         rockman.jump_on = 1
-        #         rockman.jump_dis = 0
-
 def exit():
-    global rockman, running, monster1, bullet, bullet_count, stage, ground, ground_amount, spike_up
-    del rockman, running, monster1, bullet, bullet_count, stage, ground, ground_amount, spike_up
+    global rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
+    del rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
 
 def update():
     gravity()
     char_ground()
     char_spike()
     rockman.update()
-    for m in monster1:
-        m.update()
     for b in bullet:
         b.update()
     for s in spike_up:
         s.update()
-    bm_clash()
-    cm_clash()
     bullet_out()
     delay(0.01)
 
@@ -112,45 +73,11 @@ def draw_char():
     stage.draw()
     for g in ground:
         g.draw()
-    for m in monster1:
-        m.draw()
     for b in bullet:
         b.draw()
     for s in spike_up:
         s.draw()
     rockman.draw()
-    # if rockman.hp > 0:
-    #     if rockman.hit == 0:
-    #         if rockman.jump == 0:
-    #             if rockman.dir == 0:
-    #                 rockman.idle()
-    #             else:
-    #                 rockman.run_ani()
-    #
-    #         elif rockman.jump == 1:
-    #             rockman.jump_ani()
-    #     else:
-    #         rockman.hit_ani()
-    # else:
-    #     rockman.dead_ani()
-
-
-def bm_clash():
-    global bullet_count
-    for m in monster1[:]:
-        for b in bullet[:]:
-            if b.x < m.x + 50 and b.x > m.x - 50:
-                if b.y < m.y + 50 and b.y > m.y - 50:
-                    monster1.remove(m)
-                    bullet.remove(b)
-                    bullet_count -= 1
-
-def cm_clash():
-    for m in monster1[:]:
-        if rockman.x > m.x - 25 and rockman.x < m.x + 25:
-            if rockman.y > m.y - 25 and rockman.y < m.y + 25:
-                rockman.hit = 1
-                rockman.hp -= 10
 
 def bullet_out():
     global bullet_count
@@ -194,7 +121,6 @@ def char_spike():
         if rockman.x >= s.x - 25 and rockman.x <= s.x + 25:
             if rockman.y >= s.y - 25 and rockman.y <= s.y + 25:
                 rockman.hp -= 50
-
 
 def gravity():
     global rockman
