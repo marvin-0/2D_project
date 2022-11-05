@@ -1,4 +1,7 @@
 from pico2d import*
+import game_world
+
+from bullet_class import Bullet
 
 RD, LD, RU, LU, ZD, ZU, CD, CU, HP = range(9)
 event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU', 'HP']
@@ -68,6 +71,7 @@ class ATK_IDLE:
         print('ENTER ATK_IDLE')
         self.dir = 0
         # 여기에 총발사 함수 발동
+        self.shot_bullet()
 
     def exit(self, event):
         print('EXIT ATK_IDLE')
@@ -84,6 +88,7 @@ class ATK_IDLE:
 class ATK_RUN:
     def enter(self, event):
         print('ENTER ATK_RUN')
+        self.shot_bullet()
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -164,6 +169,7 @@ class JUMP:
 class ATK_JUMP:
     def enter(self, event):
         print('ENTER ATK_JUMP')
+        self.shot_bullet()
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -290,3 +296,6 @@ class Main_char:
         if(event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
+    def shot_bullet(self):
+        bullet = Bullet(self.x, self.y, self.face_dir)
+        game_world.add_object(bullet, 1)

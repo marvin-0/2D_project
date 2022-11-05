@@ -1,33 +1,35 @@
 from pico2d import*
 import game_framework
+import pause_state
+import game_world
+
 import character_class
-import monster1_class
 import bullet_class
 import stage_class
 import map_class
-import pause_state
+
 
 rockman = None
 
-running = True
 bullet = None
-stage = None
 bullet_count = 0
+stage = None
 ground = None
 ground_amount = 0
 spike_up = None
 
 def enter():
-    global rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
+    global rockman, running, stage, ground, ground_amount, spike_up
     rockman = character_class.Main_char()
-    bullet = []
-    bullet_count = 0
     stage = stage_class.Stage()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
     spike_up = [map_class.Spike() for s in range(20)]
     set_ground()
-    running = True
+    game_world.add_object(rockman, 2)
+    game_world.add_object(stage, 0)
+    game_world.add_objects(ground, 1)
+    game_world.add_objects(spike_up, 3)
 
 def handle_events():
     global running, bullet_count, bullet
@@ -43,24 +45,19 @@ def handle_events():
         else:
             rockman.handle_event(event)
 def exit():
-    global rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
-    del rockman, running, bullet, bullet_count, stage, ground, ground_amount, spike_up
+    game_world.clear()
 
 def update():
     gravity()
     char_ground()
     char_spike()
-    rockman.update()
-    for b in bullet:
-        b.update()
-    for s in spike_up:
-        s.update()
-    bullet_out()
+    for game_object in game_world.all_objects():
+        game_object.update()
     delay(0.01)
 
 def draw():
     clear_canvas()
-    draw_char()
+    draw_world()
     update_canvas()
 
 def pause():
@@ -69,25 +66,10 @@ def pause():
 def resume():
     pass
 
-def draw_char():
-    stage.draw()
-    for g in ground:
-        g.draw()
-    for b in bullet:
-        b.draw()
-    for s in spike_up:
-        s.draw()
-    rockman.draw()
+def draw_world():
+    for game_object in game_world.all_objects():
+        game_object.draw()
 
-def bullet_out():
-    global bullet_count
-    for b in bullet[:]:
-        if b.x > 1000:
-            bullet.remove(b)
-            bullet_count -= 1
-        elif b.x < 0:
-            bullet.remove(b)
-            bullet_count -= 1
 def char_ground():
     global rockman
     for i in range(ground_amount):

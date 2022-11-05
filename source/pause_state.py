@@ -22,7 +22,7 @@ def update():
 
 def draw():
     clear_canvas()
-    play_state.draw_char()
+    play_state.draw_world()
     if mod == 1:
         image1.draw(500,400)
     else:

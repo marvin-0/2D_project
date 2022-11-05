@@ -6,3 +6,5 @@ class Stage:
 
     def draw(self):
         self.image.draw(500, 450)
+    def update(self):
+        pass

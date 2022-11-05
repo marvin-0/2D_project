@@ -8,6 +8,8 @@ class Ground:
         self.x, self.y = 2000, 1000
     def draw(self):
         self.image.draw(self.x, self.y)
+    def update(self):
+        pass
 
 class Spike:
     image = None
