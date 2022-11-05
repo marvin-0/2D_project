@@ -1,7 +1,7 @@
 from pico2d import*
 
-RD, LD, RU, LU, ZD, ZU, CD, CU, HP, JI, JR = range(11)
-event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU', 'HP', 'JI']
+RD, LD, RU, LU, ZD, ZU, CD, CU, HP = range(9)
+event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU']
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RD,
@@ -119,7 +119,7 @@ class JUMP:
         print('EXIT JUMP')
         if self.dir != 0:
             self.face_dir = self.dir
-        if event == CU:
+        if event == CU and self.jump_on == 0:
             self.jump_on = 1
             self.jump_dis = 0
 
@@ -139,9 +139,9 @@ class JUMP:
                     self.jump_dis = 0
         elif self.jump == 0:
             if self.dir == 0:
-                self.add_event(JI)
+                self.cur_state = IDLE
             else:
-                self.add_event(JR)
+                self.cur_state = RUN
 
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
@@ -151,12 +151,63 @@ class JUMP:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
         elif self.face_dir == -1:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
+class ATK_JUMP:
+    def enter(self, event):
+        print('ENTER JUMP')
+        if event == RD:
+            self.dir += 1
+        elif event == LD:
+            self.dir -= 1
+        elif event == RU:
+            self.dir -= 1
+        elif event == LU:
+            self.dir += 1
+        if self.jump == 0:
+            self.jump = 1
+
+    def exit(self, event):
+        print('EXIT JUMP')
+        if self.dir != 0:
+            self.face_dir = self.dir
+        if event == CU and self.jump_on == 0:
+            self.jump_on = 1
+            self.jump_dis = 0
+
+    def do(self):
+        if self.jump == 1:
+            if self.jump_on == 0:
+                self.y += 12
+                self.jump_dis += 1
+                if self.jump_dis == self.jump_max:
+                    self.jump_on = 1
+                    self.jump_dis = 0
+            elif self.jump_on == 1:
+                self.y += 3
+                self.jump_dis += 1
+                if self.jump_dis == 6:
+                    self.jump_on = 2
+                    self.jump_dis = 0
+        elif self.jump == 0:
+            if self.dir == 0:
+                self.cur_state = ATK_IDLE
+            else:
+                self.cur_state = ATK_RUN
+
+        self.x += 5*self.dir
+        self.x = clamp(0, self.x, 1000)
+
+    def draw(self):
+        if self.face_dir == 1:
+            self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
+        elif self.face_dir == -1:
+            self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 next_state = {
-    IDLE:   {RU: RUN, LU: RUN, RD: RUN, LD: RUN, ZD: ATK_IDLE, ZU: IDLE, CD: JUMP, CU: IDLE, JI: IDLE},
-    RUN:    {RU: IDLE, LU: IDLE, LD: IDLE, RD: IDLE, ZD: ATK_RUN, ZU: RUN, CD: JUMP, CU: RUN, JR: RUN},
-    ATK_IDLE: {RU: ATK_RUN, LU: ATK_RUN, RD: ATK_RUN, LD: ATK_RUN, ZD: ATK_IDLE, ZU: IDLE},
-    ATK_RUN:{RU: ATK_IDLE, LU: ATK_IDLE, RD: ATK_IDLE, LD: ATK_IDLE, ZD: ATK_RUN, ZU: RUN},
-    JUMP:   {RU: JUMP, LU: JUMP, RD: JUMP, LD: JUMP, ZD: ATK_IDLE, CD: JUMP, CU:JUMP, JI: IDLE, JR: RUN}
+    IDLE:   {RU: RUN, LU: RUN, RD: RUN, LD: RUN, ZD: ATK_IDLE, ZU: IDLE, CD: JUMP, CU: IDLE},
+    RUN:    {RU: IDLE, LU: IDLE, LD: IDLE, RD: IDLE, ZD: ATK_RUN, ZU: RUN, CD: JUMP, CU: RUN},
+    ATK_IDLE: {RU: ATK_RUN, LU: ATK_RUN, RD: ATK_RUN, LD: ATK_RUN, ZD: ATK_IDLE, ZU: IDLE, CD: ATK_JUMP, CU: ATK_IDLE},
+    ATK_RUN: {RU: ATK_IDLE, LU: ATK_IDLE, RD: ATK_IDLE, LD: ATK_IDLE, ZD: ATK_RUN, ZU: RUN, CD: ATK_JUMP, CU: ATK_RUN},
+    JUMP:   {RU: JUMP, LU: JUMP, RD: JUMP, LD: JUMP, ZD: ATK_JUMP, CD: JUMP, CU: JUMP},
+    ATK_JUMP: {RU: ATK_JUMP, LU: ATK_JUMP, RD: ATK_JUMP, LD: ATK_JUMP, ZD: ATK_JUMP, ZU: JUMP, CD: ATK_JUMP, CU: ATK_JUMP}
 }
 
 class Main_char:
@@ -203,98 +254,3 @@ class Main_char:
         if(event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
-
-    # def move(self):             # 실질적인 x,y좌표 바꾸는 함수
-    #     self.x += 5 * self.dir
-    #     if self.jump == 1:
-    #         if self.jump_on == 0:
-    #             self.y += 12
-    #             self.jump_dis += 1
-    #             if self.jump_dis == self.jump_max:
-    #                 self.jump_on = 1
-    #                 self.jump_dis = 0
-    #         elif self.jump_on == 1:
-    #             self.y += 3
-    #             self.jump_dis += 1
-    #             if self.jump_dis == 6:
-    #                 self.jump_on = 2
-    #                 self.jump_dis = 0
-    #
-    # def idle(self):             # 서있는 애니메이션 출력하는 함수
-    #     if self.stand == 1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 11, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 30
-    #         elif self.attack == 1:
-    #             self.image.clip_draw(self.frame % 1 * 32, 32 * 9, 32, 32, self.x, self.y, 50, 50)
-    #     elif self.stand == -1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 6, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 30
-    #         elif self.attack == 1:
-    #             self.image.clip_draw(self.frame % 1 * 32, 32 * 4, 32, 32, self.x, self.y, 50, 50)
-    #     delay(0.01)
-    #
-    # def run_ani(self):          # 달리는 애니메이션 출력하는 함수
-    #     if self.dir == 1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 10, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 40
-    #         elif self.attack == 1:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 0, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 40
-    #         delay(0.01)
-    #     elif self.dir == -1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 5, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 40
-    #         elif self.attack == 1:
-    #             self.image.clip_draw(self.frame // 10 * 32, 32 * 1, 32, 32, self.x, self.y, 50, 50)
-    #             self.frame = (self.frame + 1) % 40
-    #         delay(0.01)
-    #
-    # def jump_ani(self):         # 점프하는 애니메이션 출력하는 함수
-    #     if self.dir == 1 or self.stand == 1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame % 1 * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
-    #         elif self.attack == 1:
-    #             self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
-    #     elif self.dir == -1 or self.stand == -1:
-    #         if self.attack == 0:
-    #             self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
-    #         elif self.attack == 1:
-    #             self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
-    #     delay(0.01)
-    #
-    # def hit_ani(self):         # 점프하는 애니메이션 출력하는 함수
-    #     if self.stand == 1:
-    #         self.image.clip_draw(self.frame % 2 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
-    #         self.frame += 1
-    #     elif self.stand == -1:
-    #         self.image.clip_draw(self.frame % 2 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
-    #         self.frame += 1
-    #     if self.frame == 50:
-    #         self.frame = 0
-    #         self.hit = 0
-    #     delay(0.01)
-    #
-    # def dead(self):
-    #     if self.hp == 0:
-    #         self.dead_ani()
-    #
-    # def dead_ani(self):
-    #     if self.death < 39:
-    #         if self.dir == 1 or self.stand == 1:
-    #             self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
-    #             self.death = (self.death + 1) % 40
-    #         elif self.dir == -1 or self.stand == -1:
-    #             self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
-    #             self.death = (self.death + 1) % 40
-    #     elif self.death >= 39:
-    #         self.game_over()
-    #     delay(0.01)
-    #
-    # def game_over(self):
-    #     self.dead_image.draw(500, 450)
-
-
