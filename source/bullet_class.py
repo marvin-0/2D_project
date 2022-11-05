@@ -3,8 +3,10 @@ from character_class import *
 import play_state
 
 class Bullet:
+    image = None
     def __init__(self):
-        self.image = load_image('bullet.png')
+        if Bullet.image == None:
+            Bullet.image = load_image('bullet.png')
         self.x, self.y = play_state.rockman.x, play_state.rockman.y
         self.dir = play_state.rockman.stand
         self.speed = 10
