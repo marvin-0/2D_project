@@ -19,20 +19,20 @@ ground_amount = 0
 spike_up = None
 
 def enter():
-    global rockman, running, stage, ground, ground_amount, spike_up
-    rockman = character_class.Main_char()
+    global rockman, stage, ground, ground_amount, spike_up
+    rockman = character_class.Main_char() # 875 - 850, 175 + 500
     stage = stage_class.Stage()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
     spike_up = [map_class.Spike() for s in range(20)]
-    set_ground()
+    set_ground_1()
     game_world.add_object(rockman, 2)
     game_world.add_object(stage, 0)
     game_world.add_objects(ground, 1)
     game_world.add_objects(spike_up, 3)
 
 def handle_events():
-    global running, bullet_count, bullet
+    global bullet_count, bullet
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -79,6 +79,10 @@ def char_ground():
                     ground[i].x = 10000
                 if i == 57:
                     spike_up[6].shot = 1
+                if i == 61:
+                    spike_up[6].shot = 3
+                if i == 62:
+                    spike_up[16].shot = 2
                 rockman.y += 4
                 if rockman.jump_on != 0 and i != 55:
                     rockman.jump_on = 0
@@ -97,6 +101,8 @@ def char_ground():
                 rockman.x += 5
     if rockman.y + 25 <= 0:
         rockman.hp -= 50
+    if rockman.x > spike_up[11].x and spike_up[16].shot != 0:
+        spike_up[12].shot = 1
 
 def char_spike():
     for s in spike_up[:]:
@@ -108,7 +114,7 @@ def gravity():
     global rockman
     rockman.y -= 4
 
-def set_ground():
+def set_ground_1():
     for i in range(9):
         ground[i].y = 25
         ground[i].x = 50 * i + 25
@@ -132,9 +138,25 @@ def set_ground():
     ground[56].x = 875 - 450
     ground[57].y = 175 + 250
     ground[57].x = 875 - 550
-    ground[58].y = 175 + 200
-    ground[58].x = 875 - 850
+    ground[58].y = 175 + 350
+    ground[58].x = 875 - 800
+    ground[59].y = 175 + 450
+    ground[59].x = 875 - 850
+    ground[60].y = 175 + 500
+    ground[60].x = 875 - 650
+    ground[61].y = 175 + 500  # 가시 설치지점
+    ground[61].x = 875 - 550
+    ground[62].y = 175 + 500  # 가시 이동지점
+    ground[62].x = 875 - 450
+    ground[63].y = 175 + 500
+    ground[63].x = 875 - 250
+    ground[64].y = 175 + 550
+    ground[64].x = 875 - 100
 
     for i in range(16):
         spike_up[i].y = 225
         spike_up[i].x = 50 * i + 25
+    spike_up[16].y = 175 + 550
+    spike_up[16].x = 875 - 550
+    spike_up[17].y = 175 + 550
+    spike_up[17].x = 875 - 225

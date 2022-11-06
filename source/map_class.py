@@ -26,3 +26,13 @@ class Spike:
     def update(self):
         if self.shot == 1:
             self.y += 20
+            if self.y >= 950:
+                self.shot = 0
+        if self.shot == 2:
+            self.x += 1
+            if self.x == 875 - 450:
+                self.shot = 1
+        if self.shot == 3:
+            self.y -= 25
+            if self.y <= -50:
+                self.shot = 0

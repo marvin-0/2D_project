@@ -160,6 +160,7 @@ class JUMP:
 
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
+        self.y = clamp(0, self.y, 1000)
 
     def draw(self):
         if self.face_dir == 1:
@@ -213,6 +214,7 @@ class ATK_JUMP:
 
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
+        self.y = clamp(0, self.y, 1000)
 
     def draw(self):
         if self.face_dir == 1:
@@ -231,15 +233,15 @@ class DEATH:
 
     @staticmethod
     def do(self):
-        if self.death < 39:
-            self.death = (self.death + 1) % 40
+        if self.death < 29:
+            self.death = (self.death + 1) % 30
     @staticmethod
     def draw(self):
         if self.face_dir == 1:
             self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
         else:
             self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
-        if self.death >= 39:
+        if self.death >= 29:
             self.dead_image.draw(500, 450)
 
 next_state = {
@@ -253,10 +255,10 @@ next_state = {
 }
 
 class Main_char:
-    def __init__(self):
+    def __init__(self, x = 100, y = 90):
         self.image = load_image('rockman_sprite.png')
         self.dead_image = load_image('game_over.png')
-        self.x, self.y = 100, 90
+        self.x, self.y = x, y
         self.hp = 50
         self.dir = 0            # -1왼쪽 +1 오른쪽방향
         self.frame = 0          # 애니메이션 프레임
@@ -298,4 +300,4 @@ class Main_char:
             self.add_event(key_event)
     def shot_bullet(self):
         bullet = Bullet(self.x, self.y, self.face_dir)
-        game_world.add_object(bullet, 1)
+        game_world.add_object(bullet, 3)
