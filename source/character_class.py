@@ -160,7 +160,6 @@ class JUMP:
 
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
-        self.y = clamp(0, self.y, 1000)
 
     def draw(self):
         if self.face_dir == 1:
@@ -214,7 +213,6 @@ class ATK_JUMP:
 
         self.x += 5*self.dir
         self.x = clamp(0, self.x, 1000)
-        self.y = clamp(0, self.y, 1000)
 
     def draw(self):
         if self.face_dir == 1:
