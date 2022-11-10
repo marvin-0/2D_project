@@ -15,6 +15,7 @@ class Bullet:
 
     def draw(self):
         self.image.draw(self.x, self.y, 20, 10)
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.x += self.speed * self.dir
@@ -24,3 +25,9 @@ class Bullet:
         if self.amount > 5:
             game_world.remove_object(self)
             Bullet.count -= 1
+    def get_bb(self):
+        return self.x - 5, self.y - 5, self.x + 5, self.y + 5
+
+    def handle_collision(self, other, group):
+        if group == 'bullet:ground':
+            game_world.remove_object(self)

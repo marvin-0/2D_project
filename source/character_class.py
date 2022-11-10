@@ -29,12 +29,11 @@ key_event_table = {
 class IDLE:
     @staticmethod
     def enter(self,event):
-        print('ENTER IDLE')
         self.dir = 0
 
     @staticmethod
     def exit(self, event):
-        print('EXIT IDLE')
+        pass
 
     @staticmethod
     def do(self):
@@ -49,7 +48,6 @@ class IDLE:
             self.image.clip_draw(self.frame // 10 * 32, 32 * 6, 32, 32, self.x, self.y, 50, 50)
 class RUN:
     def enter(self, event):
-        print('ENTER RUN')
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -60,7 +58,6 @@ class RUN:
             self.dir += 1
 
     def exit(self, event):
-        print('EXIT RUN')
         self.face_dir = self.dir
 
     def do(self):
@@ -79,13 +76,12 @@ class RUN:
 
 class ATK_IDLE:
     def enter(self, event):
-        print('ENTER ATK_IDLE')
         self.dir = 0
         # 여기에 총발사 함수 발동
         self.shot_bullet()
 
     def exit(self, event):
-        print('EXIT ATK_IDLE')
+        pass
 
     def do(self):
         if self.hp <= 0:
@@ -98,7 +94,6 @@ class ATK_IDLE:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 4, 32, 32, self.x, self.y, 50, 50)
 class ATK_RUN:
     def enter(self, event):
-        print('ENTER ATK_RUN')
         self.shot_bullet()
         if event == RD:
             self.dir += 1
@@ -110,7 +105,6 @@ class ATK_RUN:
             self.dir += 1
 
     def exit(self, event):
-        print('EXIT ATK_RUN')
         self.face_dir = self.dir
 
     def do(self):
@@ -127,7 +121,6 @@ class ATK_RUN:
             self.image.clip_draw(self.frame // 10 * 32, 32 * 1, 32, 32, self.x, self.y, 50, 50)
 class JUMP:
     def enter(self, event):
-        print('ENTER JUMP')
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -140,7 +133,6 @@ class JUMP:
             self.jump = 1
 
     def exit(self, event):
-        print('EXIT JUMP')
         if self.dir != 0:
             self.face_dir = self.dir
         if event == CU and self.jump_on == 0:
@@ -179,7 +171,6 @@ class JUMP:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 class ATK_JUMP:
     def enter(self, event):
-        print('ENTER ATK_JUMP')
         self.shot_bullet()
         if event == RD:
             self.dir += 1
@@ -193,7 +184,6 @@ class ATK_JUMP:
             self.jump = 1
 
     def exit(self, event):
-        print('EXIT ATK_JUMP')
         if self.dir != 0:
             self.face_dir = self.dir
         if event == CU and self.jump_on == 0:
@@ -234,11 +224,11 @@ class ATK_JUMP:
 class DEATH:
     @staticmethod
     def enter(self,event):
-        print('ENTER IDLE')
+        pass
 
     @staticmethod
     def exit(self, event):
-        print('EXIT IDLE')
+        pass
 
     @staticmethod
     def do(self):
@@ -296,12 +286,13 @@ class Main_char:
                 print(self.cur_state, event_name[event])
 
             self.cur_state.enter(self, event)
+        self.gravity()
 
     def draw(self):
         self.cur_state.draw(self)
         debug_print('PPPP')
         debug_print(f'Face Dir: {self.face_dir}, Dir: {self.dir}')
-        draw_rectangle(self.x-15, self.y-25, self.x+15, self.y+10)
+        draw_rectangle(*self.get_bb())
     def add_event(self, event):
         self.event_que.insert(0, event)
     def handle_event(self, event):
@@ -313,5 +304,17 @@ class Main_char:
         game_world.add_object(bullet, 3)
     def Stop(self):
         self.x += -1 * self.dir * RUN_SPEED_PPS * game_framework.frame_time
-        pass
+    def gravity(self):
+        self.y -= 4
+    def get_bb(self):
+        return self.x - 10, self.y - 25, self.x + 10, self.y + 10
+    def handle_collision(self, other, group):
+        if group == 'rockman:ground':
+            self.y += 4
+            if self.jump_on != 0:
+                self.jump_on = 0
+                self.jump = 0
+                self.jump_dis = 0
+        elif group == 'rockman:spike':
+            self.hp -= 50
 

@@ -8,8 +8,13 @@ class Ground:
         self.x, self.y = 2000, 1000
     def draw(self):
         self.image.draw(self.x, self.y)
-        draw_rectangle(self.x - 25, self.y - 25, self.x + 25, self.y + 25)
+        draw_rectangle(*self.get_bb())
     def update(self):
+        pass
+
+    def get_bb(self):
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+    def handle_collision(self, other, group):
         pass
 
 class Spike:
@@ -23,7 +28,7 @@ class Spike:
     def draw(self):
         if self.dir == 1:
             self.image.draw(self.x, self.y)
-            draw_rectangle(self.x - 25, self.y - 25, self.x + 25, self.y + 25)
+            draw_rectangle(*self.get_bb())
 
     def update(self):
         if self.shot == 1:
@@ -38,3 +43,9 @@ class Spike:
             self.y -= 25
             if self.y <= -50:
                 self.shot = 0
+
+    def get_bb(self):
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+
+    def handle_collision(self, other, group):
+        pass

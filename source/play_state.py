@@ -25,11 +25,15 @@ def enter():
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
     spike_up = [map_class.Spike() for s in range(20)]
-    set_ground_1()
+    stage1()
     game_world.add_object(rockman, 2)
     game_world.add_object(stage, 0)
     game_world.add_objects(ground, 1)
     game_world.add_objects(spike_up, 3)
+
+    game_world.add_collision_pairs(rockman, ground, 'rockman:ground')
+    game_world.add_collision_pairs(rockman, spike_up, 'rockman:spike')
+    game_world.add_collision_pairs(bullet, ground, 'bullet:ground')
 
 def handle_events():
     global bullet_count, bullet
@@ -48,11 +52,14 @@ def exit():
     game_world.clear()
 
 def update():
-    gravity()
-    char_ground()
-    char_spike()
     for game_object in game_world.all_objects():
         game_object.update()
+    for a, b, group in game_world.all_collision_pairs():
+        if collide(a, b):
+            print('COLLISION ', group)
+            a.handle_collision(b, group)
+            b.handle_collision(a, group)
+
     delay(0.01)
 
 def draw():
@@ -70,57 +77,20 @@ def draw_world():
     for game_object in game_world.all_objects():
         game_object.draw()
 
-def char_ground():
-    global rockman
-    for i in range(ground_amount):
-        if rockman.y - 25 <= ground[i].y + 25 and rockman.y - 25 >= ground[i].y - 25:
-            if (rockman.x + 10 > ground[i].x - 25 and rockman.x + 10 < ground[i].x + 25) or (rockman.x - 10 > ground[i].x - 25 and rockman.x - 10 < ground[i].x + 25):
-                if i == 55:
-                    ground[i].x = 10000
-                if i == 57:
-                    spike_up[6].shot = 1
-                if i == 61:
-                    spike_up[6].shot = 3
-                if i == 62:
-                    spike_up[16].shot = 2
-                rockman.y += 4
-                if rockman.jump_on != 0 and i != 55:
-                    rockman.jump_on = 0
-                    rockman.jump = 0
-                    rockman.jump_dis = 0
-                break
-        if rockman.y + 25 >= ground[i].y - 25 and rockman.y + 25 <= ground[i].y + 25:
-            if (rockman.x + 10 > ground[i].x - 25 and rockman.x + 10 < ground[i].x + 25) or (rockman.x - 10 > ground[i].x - 25 and rockman.x - 10 < ground[i].x + 25):
-                if rockman.jump == 1:
-                    rockman.jump_on = 2
-                break
+# def gravity():
+#     global rockman
+#     rockman.y -= 4
+def collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
 
-        if rockman.x + 20 <= ground[i].x + 25 and rockman.x + 20 >= ground[i].x - 25:
-            if (rockman.y + 20 >= ground[i].y - 25 and rockman.y + 20 <= ground[i].y + 25) or (rockman.y - 20 >= ground[i].y - 25 and rockman.y - 20 <= ground[i].y + 25):
-                # rockman.x -= rockman.dir * character_class.RUN_SPEED_PPS * game_framework.frame_time
-                rockman.Stop()
-                break
-        if rockman.x - 20 <= ground[i].x + 25 and rockman.x - 20 >= ground[i].x - 25:
-            if (rockman.y + 20 >= ground[i].y - 25 and rockman.y + 20 <= ground[i].y + 25) or (rockman.y - 20 >= ground[i].y - 25 and rockman.y - 20 <= ground[i].y + 25):
-                # rockman.x += rockman.dir * character_class.RUN_SPEED_PPS * game_framework.frame_time
-                rockman.Stop()
-                break
-    if rockman.y + 25 <= 0:
-        rockman.hp -= 50
-    if rockman.x > spike_up[11].x and spike_up[16].shot != 0:
-        spike_up[12].shot = 1
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
 
-def char_spike():
-    for s in spike_up[:]:
-        if rockman.x >= s.x - 25 and rockman.x <= s.x + 25:
-            if rockman.y >= s.y - 25 and rockman.y <= s.y + 25:
-                rockman.hp -= 50
-
-def gravity():
-    global rockman
-    rockman.y -= 4
-
-def set_ground_1():
+    return True
+def stage1():
     for i in range(9):
         ground[i].y = 25
         ground[i].x = 50 * i + 25
