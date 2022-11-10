@@ -6,7 +6,7 @@ class Bullet:
 
     def __init__(self, x = 400, y = 300, velocity = 1):
         if Bullet.image == None:
-            Bullet.image = load_image('bullet.png')
+            Bullet.image = load_image('sprite/bullet.png')
         self.x, self.y = x, y
         self.dir = velocity
         self.speed = 10

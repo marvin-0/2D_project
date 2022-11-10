@@ -5,7 +5,7 @@ image = None
 
 def enter():
     global image
-    image = load_image('title_screen.png')
+    image = load_image('sprite/title_screen.png')
 
 def exit():
     global image

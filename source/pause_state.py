@@ -9,8 +9,8 @@ mod = None
 
 def enter():
     global image1, image2, mod
-    image1 = load_image('Pause1.png')
-    image2 = load_image('Pause2.png')
+    image1 = load_image('sprite/Pause1.png')
+    image2 = load_image('sprite/Pause2.png')
     mod = 1
 
 def exit():

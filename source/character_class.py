@@ -1,7 +1,17 @@
 from pico2d import*
 import game_world
-
+import game_framework
 from bullet_class import Bullet
+
+PIXEL_PER_METER = (6.0 / 0.1)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
 
 RD, LD, RU, LU, ZD, ZU, CD, CU, HP = range(9)
 event_name = ['RD', 'LD', 'RU', 'LU', 'ZD', 'ZU', 'CD', 'CU', 'HP']
@@ -57,7 +67,8 @@ class RUN:
         if self.hp <= 0:
             self.add_event(HP)
         self.frame = (self.frame + 1) % 40
-        self.x += 5*self.dir
+        #self.x += 5 * self.dir
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -106,7 +117,7 @@ class ATK_RUN:
         if self.hp <= 0:
             self.add_event(HP)
         self.frame = (self.frame + 1) % 40
-        self.x += 5*self.dir
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -158,7 +169,7 @@ class JUMP:
             else:
                 self.cur_state = RUN
 
-        self.x += 5*self.dir
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -211,7 +222,7 @@ class ATK_JUMP:
             else:
                 self.cur_state = ATK_RUN
 
-        self.x += 5*self.dir
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -254,8 +265,8 @@ next_state = {
 
 class Main_char:
     def __init__(self, x = 100, y = 90):
-        self.image = load_image('rockman_sprite.png')
-        self.dead_image = load_image('game_over.png')
+        self.image = load_image('sprite/rockman_sprite.png')
+        self.dead_image = load_image('sprite/game_over.png')
         self.x, self.y = x, y
         self.hp = 50
         self.dir = 0            # -1왼쪽 +1 오른쪽방향
@@ -290,6 +301,7 @@ class Main_char:
         self.cur_state.draw(self)
         debug_print('PPPP')
         debug_print(f'Face Dir: {self.face_dir}, Dir: {self.dir}')
+        draw_rectangle(self.x-15, self.y-25, self.x+15, self.y+10)
     def add_event(self, event):
         self.event_que.insert(0, event)
     def handle_event(self, event):
@@ -299,3 +311,7 @@ class Main_char:
     def shot_bullet(self):
         bullet = Bullet(self.x, self.y, self.face_dir)
         game_world.add_object(bullet, 3)
+    def Stop(self):
+        self.x += -1 * self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        pass
+

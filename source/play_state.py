@@ -88,17 +88,23 @@ def char_ground():
                     rockman.jump_on = 0
                     rockman.jump = 0
                     rockman.jump_dis = 0
+                break
         if rockman.y + 25 >= ground[i].y - 25 and rockman.y + 25 <= ground[i].y + 25:
             if (rockman.x + 10 > ground[i].x - 25 and rockman.x + 10 < ground[i].x + 25) or (rockman.x - 10 > ground[i].x - 25 and rockman.x - 10 < ground[i].x + 25):
                 if rockman.jump == 1:
                     rockman.jump_on = 2
+                break
 
-        if rockman.x + 10 <= ground[i].x + 25 and rockman.x + 10 >= ground[i].x - 25:
+        if rockman.x + 20 <= ground[i].x + 25 and rockman.x + 20 >= ground[i].x - 25:
             if (rockman.y + 20 >= ground[i].y - 25 and rockman.y + 20 <= ground[i].y + 25) or (rockman.y - 20 >= ground[i].y - 25 and rockman.y - 20 <= ground[i].y + 25):
-                rockman.x -= 5
-        if rockman.x - 10 <= ground[i].x + 25 and rockman.x - 10 >= ground[i].x - 25:
+                # rockman.x -= rockman.dir * character_class.RUN_SPEED_PPS * game_framework.frame_time
+                rockman.Stop()
+                break
+        if rockman.x - 20 <= ground[i].x + 25 and rockman.x - 20 >= ground[i].x - 25:
             if (rockman.y + 20 >= ground[i].y - 25 and rockman.y + 20 <= ground[i].y + 25) or (rockman.y - 20 >= ground[i].y - 25 and rockman.y - 20 <= ground[i].y + 25):
-                rockman.x += 5
+                # rockman.x += rockman.dir * character_class.RUN_SPEED_PPS * game_framework.frame_time
+                rockman.Stop()
+                break
     if rockman.y + 25 <= 0:
         rockman.hp -= 50
     if rockman.x > spike_up[11].x and spike_up[16].shot != 0:
