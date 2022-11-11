@@ -58,6 +58,7 @@ def update():
             print(group)
             a.handle_collision(b, group)
             b.handle_collision(a, group)
+            break
         elif group == 'char:ground':
             collide_ground(a, b)
         # elif collide_ground(a, b) == 1 and group == 'char:ground':

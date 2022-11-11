@@ -34,7 +34,8 @@ class IDLE:
 
     @staticmethod
     def exit(self, event):
-        pass
+        if event == ZD:
+            self.shot_bullet()
 
     @staticmethod
     def do(self):
@@ -60,6 +61,8 @@ class RUN:
 
     def exit(self, event):
         self.face_dir = self.dir
+        if event == ZD:
+            self.shot_bullet()
 
     def do(self):
         if self.hp <= 0:
@@ -80,7 +83,6 @@ class ATK_IDLE:
     def enter(self, event):
         self.dir = 0
         # 여기에 총발사 함수 발동
-        self.shot_bullet()
 
     def exit(self, event):
         pass
@@ -96,7 +98,6 @@ class ATK_IDLE:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 4, 32, 32, self.x, self.y, 50, 50)
 class ATK_RUN:
     def enter(self, event):
-        self.shot_bullet()
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -140,6 +141,8 @@ class JUMP:
         if event == CU and self.jump_on == 0:
             self.jump_on = 1
             self.jump_dis = 0
+        if event == ZD:
+            self.shot_bullet()
 
     def do(self):
         if self.hp <= 0:
@@ -173,7 +176,6 @@ class JUMP:
             self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 class ATK_JUMP:
     def enter(self, event):
-        self.shot_bullet()
         if event == RD:
             self.dir += 1
         elif event == LD:
