@@ -35,12 +35,12 @@ def add_collision_pairs(a, b, group):
     if group not in collision_group:
         print('Add new group ', group)
         collision_group[group] = [ [], [] ] # list of list : list pair
-    if a:
+    if a not in collision_group[group]:
         if type(a) is list:
             collision_group[group][0] += a
         else:
             collision_group[group][0].append(a)
-    if b:
+    if b not in collision_group[group]:
         if type(b) is list:
             collision_group[group][1] += b
         else:
