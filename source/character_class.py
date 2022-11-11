@@ -1,6 +1,7 @@
 from pico2d import*
 import game_world
 import game_framework
+import play_state
 from bullet_class import Bullet
 
 PIXEL_PER_METER = (6.0 / 0.1)
@@ -65,7 +66,8 @@ class RUN:
             self.add_event(HP)
         self.frame = (self.frame + 1) % 40
         #self.x += 5 * self.dir
-        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
+
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -111,7 +113,7 @@ class ATK_RUN:
         if self.hp <= 0:
             self.add_event(HP)
         self.frame = (self.frame + 1) % 40
-        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -161,7 +163,7 @@ class JUMP:
             else:
                 self.cur_state = RUN
 
-        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -212,7 +214,7 @@ class ATK_JUMP:
             else:
                 self.cur_state = ATK_RUN
 
-        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
         self.x = clamp(0, self.x, 1000)
 
     def draw(self):
@@ -292,7 +294,8 @@ class Main_char:
         self.cur_state.draw(self)
         debug_print('PPPP')
         debug_print(f'Face Dir: {self.face_dir}, Dir: {self.dir}')
-        draw_rectangle(*self.get_bb())
+        draw_rectangle(self.x - 5, self.y - 25, self.x + 5, self.y + 25)
+        draw_rectangle(self.x - 10, self.y - 20, self.x + 10, self.y + 20)
     def add_event(self, event):
         self.event_que.insert(0, event)
     def handle_event(self, event):
@@ -302,19 +305,29 @@ class Main_char:
     def shot_bullet(self):
         bullet = Bullet(self.x, self.y, self.face_dir)
         game_world.add_object(bullet, 3)
-    def Stop(self):
-        self.x += -1 * self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
     def gravity(self):
         self.y -= 4
     def get_bb(self):
-        return self.x - 10, self.y - 25, self.x + 10, self.y + 10
+        return self.x, self.y, self.x, self.y
+    def get_bb_ground(self):
+        return self.x - 10, self.y - 25, self.x + 10, self.y + 25
     def handle_collision(self, other, group):
-        if group == 'rockman:ground':
+        if group == 'char:spike':
+            self.hp -= 50
+
+    def ground_collision(self, type, other):
+        if type == 1:
             self.y += 4
             if self.jump_on != 0:
                 self.jump_on = 0
                 self.jump = 0
                 self.jump_dis = 0
-        elif group == 'rockman:spike':
-            self.hp -= 50
+        elif type == 2:
+            if self.jump == 1:
+                self.jump_on = 2
+        elif type == 3:
+            self.x -= round(RUN_SPEED_PPS * game_framework.frame_time)
+        elif type == 4:
+            self.x += round(RUN_SPEED_PPS * game_framework.frame_time)
 

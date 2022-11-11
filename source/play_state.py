@@ -11,7 +11,7 @@ import map_class
 
 rockman = None
 
-bullet = None
+bullet = []
 bullet_count = 0
 stage = None
 ground = None
@@ -31,9 +31,8 @@ def enter():
     game_world.add_objects(ground, 1)
     game_world.add_objects(spike_up, 3)
 
-    game_world.add_collision_pairs(rockman, ground, 'rockman:ground')
-    game_world.add_collision_pairs(rockman, spike_up, 'rockman:spike')
-    game_world.add_collision_pairs(bullet, ground, 'bullet:ground')
+    game_world.add_collision_pairs(rockman, ground, 'char:ground')
+    game_world.add_collision_pairs(rockman, spike_up, 'char:spike')
 
 def handle_events():
     global bullet_count, bullet
@@ -55,10 +54,24 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
     for a, b, group in game_world.all_collision_pairs():
-        if collide(a, b):
-            print('COLLISION ', group)
+        if collide(a, b) and group != 'char:ground':
+            print(group)
             a.handle_collision(b, group)
             b.handle_collision(a, group)
+        elif group == 'char:ground':
+            collide_ground(a, b)
+        # elif collide_ground(a, b) == 1 and group == 'char:ground':
+        #     a.ground_collision(1,b)
+        #     b.ground_collision(1,a)
+        # elif collide_ground(a, b) == 2 and group == 'char:ground':
+        #     a.ground_collision(2,b)
+        #     b.ground_collision(2,a)
+        # elif collide_ground(a, b) == 3 and group == 'char:ground':
+        #     a.ground_collision(3,b)
+        #     b.ground_collision(3,a)
+        # elif collide_ground(a, b) == 4 and group == 'char:ground':
+        #     a.ground_collision(4,b)
+        #     b.ground_collision(4,a)
 
     delay(0.01)
 
@@ -81,15 +94,42 @@ def draw_world():
 #     global rockman
 #     rockman.y -= 4
 def collide(a, b):
-    left_a, bottom_a, right_a, top_a = a.get_bb()
-    left_b, bottom_b, right_b, top_b = b.get_bb()
+    la, ba, ra, ta = a.get_bb()
+    lb, bb, rb, tb = b.get_bb()
 
-    if left_a > right_b: return False
-    if right_a < left_b: return False
-    if top_a < bottom_b: return False
-    if bottom_a > top_b: return False
+    if la > rb: return False
+    if ra < lb: return False
+    if ta < bb: return False
+    if ba > tb: return False
 
     return True
+
+def collide_ground(a, b):
+    la, ba, ra, ta = a.get_bb_ground() # self.x - 10, self.y - 25, self.x + 10, self.y + 25
+    lb, bb, rb, tb = b.get_bb() # self.x - 25, self.y - 25, self.x + 25, self.y + 25
+
+    # 땅 윗면
+    if ba <= tb and ba >= bb:
+        if (la + 5 > lb and la + 5 < rb) or (ra - 5 > lb and ra - 5 < rb):
+            a.ground_collision(1, b)
+            b.ground_collision(1, a)
+    # 땅 아랫면
+    if ta >= bb and ta <= tb:
+        if (la + 5 > lb and la + 5 < rb) or (ra - 5 > lb and ra - 5 < rb):
+            a.ground_collision(2, b)
+            b.ground_collision(2, a)
+    # 땅 왼면
+    if ra <= rb and ra >= lb:
+        if (ta - 5 <= tb and ta - 5 >= bb) or (ba + 5 <= tb and ba + 5 >= bb):
+            a.ground_collision(3, b)
+            b.ground_collision(3, a)
+    # 땅 오른면
+    if la >= lb and la <= rb:
+        if (ta - 5 <= tb and ta - 5 >= bb) or (ba + 5 <= tb and ba + 5 >= bb):
+            a.ground_collision(4, b)
+            b.ground_collision(4, a)
+
+    return False
 def stage1():
     for i in range(9):
         ground[i].y = 25

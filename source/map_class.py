@@ -17,6 +17,9 @@ class Ground:
     def handle_collision(self, other, group):
         pass
 
+    def ground_collision(self, type, other):
+        pass
+
 class Spike:
     image = None
     def __init__(self):

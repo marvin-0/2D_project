@@ -22,10 +22,14 @@ def all_objects():
             yield o
 
 def clear():
+    global collision_group
     for o in all_objects():
         del o
     for layer in world:
         layer.clear()
+    for a, b, group in all_collision_pairs():
+        del a, b, group
+    collision_group = {}
 
 def add_collision_pairs(a, b, group):
     if group not in collision_group:
@@ -33,14 +37,14 @@ def add_collision_pairs(a, b, group):
         collision_group[group] = [ [], [] ] # list of list : list pair
     if a:
         if type(a) is list:
-            collision_group[group][1] += a
+            collision_group[group][0] += a
         else:
-            collision_group[group][1].append(a)
+            collision_group[group][0].append(a)
     if b:
         if type(b) is list:
-            collision_group[group][0] += b
+            collision_group[group][1] += b
         else:
-            collision_group[group][0].append(b)
+            collision_group[group][1].append(b)
 def all_collision_pairs():
     for group, pairs in collision_group.items():
         for a in pairs[0]:
