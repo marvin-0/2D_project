@@ -71,7 +71,7 @@ class RUN:
         #self.x += 5 * self.dir
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
 
-        self.x = clamp(0, self.x, 1000)
+        self.x = clamp(0, self.x, 1100)
 
     def draw(self):
         if self.dir == 1:
@@ -115,7 +115,7 @@ class ATK_RUN:
             self.add_event(HP)
         self.frame = (self.frame + 1) % 40
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
-        self.x = clamp(0, self.x, 1000)
+        self.x = clamp(0, self.x, 1100)
 
     def draw(self):
         if self.dir == 1:
@@ -167,7 +167,7 @@ class JUMP:
                 self.cur_state = RUN
 
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
-        self.x = clamp(0, self.x, 1000)
+        self.x = clamp(0, self.x, 1100)
 
     def draw(self):
         if self.face_dir == 1:
@@ -217,7 +217,7 @@ class ATK_JUMP:
                 self.cur_state = ATK_RUN
 
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
-        self.x = clamp(0, self.x, 1000)
+        self.x = clamp(0, self.x, 1100)
 
     def draw(self):
         if self.face_dir == 1:
@@ -321,7 +321,7 @@ class Main_char:
     def ground_collision(self, type, other):
         if type == 1:
             self.y += 4
-            if self.jump_on != 0:
+            if self.jump_on != 0 and other.num != 55:
                 self.jump_on = 0
                 self.jump = 0
                 self.jump_dis = 0
@@ -329,7 +329,9 @@ class Main_char:
             if self.jump == 1:
                 self.jump_on = 2
         elif type == 3:
-            self.x -= round(RUN_SPEED_PPS * game_framework.frame_time)
+            if other.num != 55:
+                self.x -= round(RUN_SPEED_PPS * game_framework.frame_time)
         elif type == 4:
-            self.x += round(RUN_SPEED_PPS * game_framework.frame_time)
+            if other.num != 55:
+                self.x += round(RUN_SPEED_PPS * game_framework.frame_time)
 

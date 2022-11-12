@@ -5,7 +5,7 @@ import game_world
 
 import character_class
 import bullet_class
-import stage_class
+import back_ground_class
 import map_class
 
 
@@ -13,21 +13,26 @@ rockman = None
 
 bullet = []
 bullet_count = 0
-stage = None
+back_ground = None
 ground = None
 ground_amount = 0
 spike_up = None
+stage = 2
+char_x, char_y = 25, 90#100, 90
 
 def enter():
-    global rockman, stage, ground, ground_amount, spike_up
-    rockman = character_class.Main_char() # 875 - 850, 175 + 500
-    stage = stage_class.Stage()
+    global rockman, back_ground, ground, ground_amount, spike_up
+    rockman = character_class.Main_char(char_x, char_y) # 875 - 850, 175 + 500
+    back_ground = back_ground_class.Back_ground()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
     spike_up = [map_class.Spike() for s in range(20)]
-    stage1()
+    if stage == 1:
+        stage1()
+    elif stage == 2:
+        stage2()
     game_world.add_object(rockman, 2)
-    game_world.add_object(stage, 0)
+    game_world.add_object(back_ground, 0)
     game_world.add_objects(ground, 1)
     game_world.add_objects(spike_up, 3)
 
@@ -35,7 +40,7 @@ def enter():
     game_world.add_collision_pairs(rockman, spike_up, 'char:spike')
 
 def handle_events():
-    global bullet_count, bullet
+    global stage, char_x, char_y
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -45,34 +50,33 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
             exit()
             enter()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
+            exit()
+            stage = 1
+            char_x, char_y = 100, 90
+            enter()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
+            exit()
+            stage = 2
+            char_x, char_y = 25, 90
+            enter()
         else:
             rockman.handle_event(event)
 def exit():
     game_world.clear()
+    global rockman, back_ground, ground, ground_amount, spike_up
+    del rockman, back_ground, ground, ground_amount, spike_up
 
 def update():
     for game_object in game_world.all_objects():
         game_object.update()
     for a, b, group in game_world.all_collision_pairs():
         if collide(a, b) and group != 'char:ground':
-            print(group)
             a.handle_collision(b, group)
             b.handle_collision(a, group)
             break
         elif group == 'char:ground':
             collide_ground(a, b)
-        # elif collide_ground(a, b) == 1 and group == 'char:ground':
-        #     a.ground_collision(1,b)
-        #     b.ground_collision(1,a)
-        # elif collide_ground(a, b) == 2 and group == 'char:ground':
-        #     a.ground_collision(2,b)
-        #     b.ground_collision(2,a)
-        # elif collide_ground(a, b) == 3 and group == 'char:ground':
-        #     a.ground_collision(3,b)
-        #     b.ground_collision(3,a)
-        # elif collide_ground(a, b) == 4 and group == 'char:ground':
-        #     a.ground_collision(4,b)
-        #     b.ground_collision(4,a)
 
     delay(0.01)
 
@@ -149,14 +153,15 @@ def stage1():
     ground[53].x = 875
     ground[54].y = 175 + 150 + 50
     ground[54].x = 875 - 100
-    ground[55].y = 175 + 300
-    ground[55].x = 875 - 200
+    ground[55].y = 175 + 350 # 갑툭튀
+    ground[55].x = 875 - 150
+    ground[55].show = 0
     ground[56].y = 175 + 200
-    ground[56].x = 875 - 450
+    ground[56].x = 875 - 400
     ground[57].y = 175 + 250
     ground[57].x = 875 - 550
     ground[58].y = 175 + 350
-    ground[58].x = 875 - 800
+    ground[58].x = 875 - 750
     ground[59].y = 175 + 450
     ground[59].x = 875 - 850
     ground[60].y = 175 + 500
@@ -177,3 +182,25 @@ def stage1():
     spike_up[16].x = 875 - 550
     spike_up[17].y = 175 + 550
     spike_up[17].x = 875 - 225
+
+def stage2():
+    ground[0].x = 25
+    ground[0].y = 25
+
+    ground[1].x = 25 + 100
+    ground[1].y = 25 + 150
+
+    ground[2].x = 25 + 250
+    ground[2].y = 25 + 200
+
+    ground[3].x = 25 + 250
+    ground[3].y = 25 + 200
+
+    ground[4].x = 25 + 250
+    ground[4].y = 25 + 200
+
+
+
+    for i in range(19):
+        spike_up[i].y = 25
+        spike_up[i].x = 50 * i + 75

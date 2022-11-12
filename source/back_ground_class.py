@@ -1,6 +1,6 @@
 from pico2d import *
 
-class Stage:
+class Back_ground:
     def __init__(self):
         self.image = load_image('sprite/map.png')
 

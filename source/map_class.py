@@ -1,14 +1,24 @@
 from pico2d import *
+import play_state
+
 
 class Ground:
     image = None
+    count = 0
     def __init__(self):
         if Ground.image == None:
             Ground.image = load_image('sprite/ground.png')
+        if Ground.count >= 100:
+            Ground.count = 0
         self.x, self.y = 2000, 1000
+        self.num = Ground.count
+        Ground.count += 1
+        self.show = 1
+        self.angle = 0
     def draw(self):
-        self.image.draw(self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        if self.show == 1:
+            self.image.clip_composite_draw(0, 0, 50, 50, self.angle * 3.141592 / 180, '', self.x, self.y)
+            draw_rectangle(*self.get_bb())
     def update(self):
         pass
 
@@ -18,7 +28,24 @@ class Ground:
         pass
 
     def ground_collision(self, type, other):
-        pass
+        if type == 1:
+            if play_state.stage == 1:
+                if self.num == 55:
+                    self.show = 1
+                    self.x = 10000
+                elif self.num == 57:
+                    play_state.spike_up[6].shot = 1
+                elif self.num == 62:
+                    play_state.spike_up[16].shot = 2
+        elif type == 2:
+            if play_state.stage == 1:
+                if self.num == 55:
+                    self.show = 1
+        elif type == 3:
+            pass
+        elif type == 4:
+            pass
+
 
 class Spike:
     image = None
@@ -42,10 +69,6 @@ class Spike:
             self.x += 1
             if self.x == 875 - 450:
                 self.shot = 1
-        if self.shot == 3:
-            self.y -= 25
-            if self.y <= -50:
-                self.shot = 0
 
     def get_bb(self):
         return self.x - 25, self.y - 25, self.x + 25, self.y + 25
