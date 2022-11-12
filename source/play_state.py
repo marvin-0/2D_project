@@ -17,8 +17,8 @@ back_ground = None
 ground = None
 ground_amount = 0
 spike_up = None
-stage = 2
-char_x, char_y = 25, 90#100, 90
+stage = 1
+char_x, char_y = 100, 90
 
 def enter():
     global rockman, back_ground, ground, ground_amount, spike_up
@@ -26,7 +26,10 @@ def enter():
     back_ground = back_ground_class.Back_ground()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
-    spike_up = [map_class.Spike() for s in range(20)]
+    if stage == 1:
+        spike_up = [map_class.Spike() for s in range(20)]
+    elif stage == 2:
+        spike_up = [map_class.Spike() for s in range(50)]
     if stage == 1:
         stage1()
     elif stage == 2:
@@ -193,14 +196,30 @@ def stage2():
     ground[2].x = 25 + 250
     ground[2].y = 25 + 200
 
-    ground[3].x = 25 + 250
-    ground[3].y = 25 + 200
+    ground[3].x = 25 + 350
+    ground[3].y = 25 + 350
 
-    ground[4].x = 25 + 250
-    ground[4].y = 25 + 200
+    ground[4].x = 25 + 500
+    ground[4].y = 25 + 400
+
+    ground[5].x = 25 + 650
+    ground[5].y = 25 + 450
+
+    ground[6].x = 25 + 850
+    ground[6].y = 25 + 550
+
+    ground[7].x = 25 + 950
+    ground[7].y = 25 + 650
 
 
 
     for i in range(19):
         spike_up[i].y = 25
         spike_up[i].x = 50 * i + 75
+    for i in range(20, 37):
+        spike_up[i].y = 75 + i % 20 * 50
+        spike_up[i].x = -75
+        spike_up[i].angle = 270
+        spike_up[i].shot = 1
+    spike_up[37].x = 550
+    spike_up[37].y = 25 + 450

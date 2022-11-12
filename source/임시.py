@@ -43,3 +43,24 @@
 #         if rockman.x >= s.x - 25 and rockman.x <= s.x + 25:
 #             if rockman.y >= s.y - 25 and rockman.y <= s.y + 25:
 #                 rockman.hp -= 50
+
+
+# if ba <= tb and ba >= bb:
+#     if (la + 5 > lb and la + 5 < rb) or (ra - 5 > lb and ra - 5 < rb):
+#         a.ground_collision(1, b)
+#         b.ground_collision(1, a)
+# # 땅 아랫면
+# if ta >= bb and ta <= tb:
+#     if (la + 5 > lb and la + 5 < rb) or (ra - 5 > lb and ra - 5 < rb):
+#         a.ground_collision(2, b)
+#         b.ground_collision(2, a)
+# # 땅 왼면
+# if ra <= rb and ra >= lb:
+#     if (ta - 5 <= tb and ta - 5 >= bb) or (ba + 5 <= tb and ba + 5 >= bb):
+#         a.ground_collision(3, b)
+#         b.ground_collision(3, a)
+# # 땅 오른면
+# if la >= lb and la <= rb:
+#     if (ta - 5 <= tb and ta - 5 >= bb) or (ba + 5 <= tb and ba + 5 >= bb):
+#         a.ground_collision(4, b)
+#         b.ground_collision(4, a)

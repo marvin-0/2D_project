@@ -310,6 +310,8 @@ class Main_char:
         game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
     def gravity(self):
         self.y -= 4
+        if self.y <= -10:
+            self.hp = 0
     def get_bb(self):
         return self.x, self.y, self.x, self.y
     def get_bb_ground(self):
@@ -329,9 +331,9 @@ class Main_char:
             if self.jump == 1:
                 self.jump_on = 2
         elif type == 3:
-            if other.num != 55:
+            if other.show == 1:
                 self.x -= round(RUN_SPEED_PPS * game_framework.frame_time)
         elif type == 4:
-            if other.num != 55:
+            if other.show == 1:
                 self.x += round(RUN_SPEED_PPS * game_framework.frame_time)
 
