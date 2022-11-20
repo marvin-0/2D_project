@@ -1,6 +1,13 @@
 from pico2d import *
+import game_world
+import game_framework
 import play_state
 
+PIXEL_PER_METER = (6.0 / 0.1)
+SPIKE_SPEED_KMPH = 91.0
+SPIKE_SPEED_MPM = (SPIKE_SPEED_KMPH * 1000.0 / 60.0)
+SPIKE_SPEED_MPS = (SPIKE_SPEED_MPM / 60.0)
+SPIKE_SPEED_PPS = (SPIKE_SPEED_MPS * PIXEL_PER_METER)
 
 class Ground:
     image = None
@@ -66,6 +73,7 @@ class Spike:
         self.angle = 0
     def draw(self):
         self.image.clip_composite_draw(0, 0, 50, 50, self.angle * 3.141592 / 180, '', self.x, self.y)
+        print(round(SPIKE_SPEED_PPS * game_framework.frame_time))
         # draw_rectangle(*self.get_bb())
         # if self.dir == 1:
         #     self.image.draw(self.x, self.y)
@@ -74,18 +82,18 @@ class Spike:
     def update(self):
         if play_state.stage == 1:
             if self.shot == 1:
-                self.y += 25
+                self.y += round(SPIKE_SPEED_PPS * game_framework.frame_time) + 5
                 if self.y >= 950:
                     self.shot = 0
             if self.shot == 2:
                 self.x += 1
                 if self.x == 875 - 450:
-                    self.shot = 1
+                    self.shot = round(SPIKE_SPEED_PPS * game_framework.frame_time) - 18
         elif play_state.stage == 2:
             if self.shot == 1:
-                self.x += 1
+                self.x += round(SPIKE_SPEED_PPS * game_framework.frame_time) - 19
             elif self.shot == 2:
-                self.y += 25
+                self.y += round(SPIKE_SPEED_PPS * game_framework.frame_time) + 5
                 if self.y >= 950:
                     self.shot = 0
 

@@ -10,6 +10,11 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
+GRAVITY_SPEED_KMPH = 18.0
+GRAVITY_SPEED_MPM = (GRAVITY_SPEED_KMPH * 1000.0 / 60.0)
+GRAVITY_SPEED_MPS = (GRAVITY_SPEED_MPM / 60.0)
+GRAVITY_SPEED_PPS = (GRAVITY_SPEED_MPS * PIXEL_PER_METER)
+
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
@@ -155,13 +160,13 @@ class JUMP:
             self.add_event(HP)
         if self.jump == 1:
             if self.jump_on == 0:
-                self.y += 12
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time) * 3
                 self.jump_dis += 1
                 if self.jump_dis == self.jump_max:
                     self.jump_on = 1
                     self.jump_dis = 0
             elif self.jump_on == 1:
-                self.y += 3
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time) - 1
                 self.jump_dis += 1
                 if self.jump_dis == 6:
                     self.jump_on = 2
@@ -315,7 +320,8 @@ class Main_char:
         game_world.add_object(bullet, 3)
         game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
     def gravity(self):
-        self.y -= 4
+        self.y -= round(GRAVITY_SPEED_PPS * game_framework.frame_time)
+        # self.y -= 4
         if self.y <= -10:
             self.hp = 0
     def get_bb(self):
