@@ -41,13 +41,16 @@ class IDLE:
     def do(self):
         if self.hp <= 0:
             self.add_event(HP)
-        self.frame = (self.frame + 1) % 30
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+        # self.frame = (self.frame + 1) % 30
     @staticmethod
     def draw(self):
         if self.face_dir == 1:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 11, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 11, 32, 32, self.x, self.y, 50, 50)
+            # self.image.clip_draw(self.frame // 10 * 32, 32 * 11, 32, 32, self.x, self.y, 50, 50)
         else:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 6, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 6, 32, 32, self.x, self.y, 50, 50)
+            # self.image.clip_draw(self.frame // 10 * 32, 32 * 6, 32, 32, self.x, self.y, 50, 50)
 class RUN:
     def enter(self, event):
         if event == RD:
@@ -67,7 +70,8 @@ class RUN:
     def do(self):
         if self.hp <= 0:
             self.add_event(HP)
-        self.frame = (self.frame + 1) % 40
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        # self.frame = (self.frame + 1) % 40
         #self.x += 5 * self.dir
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
 
@@ -75,9 +79,11 @@ class RUN:
 
     def draw(self):
         if self.dir == 1:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 10, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 10, 32, 32, self.x, self.y, 50, 50)
+            # self.image.clip_draw(self.frame // 10 * 32, 32 * 10, 32, 32, self.x, self.y, 50, 50)
         elif self.dir == -1:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 5, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 5, 32, 32, self.x, self.y, 50, 50)
+            # self.image.clip_draw(self.frame // 10 * 32, 32 * 5, 32, 32, self.x, self.y, 50, 50)
 
 class ATK_IDLE:
     def enter(self, event):
@@ -93,9 +99,9 @@ class ATK_IDLE:
         pass
     def draw(self):
         if self.face_dir == 1:
-            self.image.clip_draw(self.frame % 1 * 32, 32 * 9, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1) * 32, 32 * 9, 32, 32, self.x, self.y, 50, 50)
         else:
-            self.image.clip_draw(self.frame % 1 * 32, 32 * 4, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1) * 32, 32 * 4, 32, 32, self.x, self.y, 50, 50)
 class ATK_RUN:
     def enter(self, event):
         if event == RD:
@@ -113,15 +119,15 @@ class ATK_RUN:
     def do(self):
         if self.hp <= 0:
             self.add_event(HP)
-        self.frame = (self.frame + 1) % 40
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         self.x += self.dir * round(RUN_SPEED_PPS * game_framework.frame_time)
         self.x = clamp(0, self.x, 1100)
 
     def draw(self):
         if self.dir == 1:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 0, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 0, 32, 32, self.x, self.y, 50, 50)
         elif self.dir == -1:
-            self.image.clip_draw(self.frame // 10 * 32, 32 * 1, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 32, 32 * 1, 32, 32, self.x, self.y, 50, 50)
 class JUMP:
     def enter(self, event):
         if event == RD:
@@ -171,9 +177,9 @@ class JUMP:
 
     def draw(self):
         if self.face_dir == 1:
-            self.image.clip_draw(self.frame % 1 * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
         elif self.face_dir == -1:
-            self.image.clip_draw(self.frame % 1 * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 class ATK_JUMP:
     def enter(self, event):
         if event == RD:
@@ -221,9 +227,9 @@ class ATK_JUMP:
 
     def draw(self):
         if self.face_dir == 1:
-            self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1 + 1) * 32, 32 * 7, 32, 32, self.x, self.y, 50, 50)
         elif self.face_dir == -1:
-            self.image.clip_draw((self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame % 1 + 1) * 32, 32 * 2, 32, 32, self.x, self.y, 50, 50)
 
 class DEATH:
     @staticmethod
@@ -236,15 +242,15 @@ class DEATH:
 
     @staticmethod
     def do(self):
-        if self.death < 29:
-            self.death = (self.death + 1) % 30
+        if self.death < 3:
+            self.death = (self.death + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
     @staticmethod
     def draw(self):
         if self.face_dir == 1:
-            self.image.clip_draw(self.death // 10 * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.death) * 32, 32 * 8, 32, 32, self.x, self.y, 50, 50)
         else:
-            self.image.clip_draw(self.death // 10 * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
-        if self.death >= 29:
+            self.image.clip_draw(int(self.death) * 32, 32 * 3, 32, 32, self.x, self.y, 50, 50)
+        if self.death >= 3:
             self.dead_image.draw(500, 450)
 
 next_state = {
