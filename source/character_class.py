@@ -5,18 +5,18 @@ import play_state
 from bullet_class import Bullet
 
 PIXEL_PER_METER = (6.0 / 0.1)
-RUN_SPEED_KMPH = 20.0
+RUN_SPEED_KMPH = 15.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-GRAVITY_SPEED_KMPH = 18.0
+GRAVITY_SPEED_KMPH = 15.0
 GRAVITY_SPEED_MPM = (GRAVITY_SPEED_KMPH * 1000.0 / 60.0)
 GRAVITY_SPEED_MPS = (GRAVITY_SPEED_MPM / 60.0)
 GRAVITY_SPEED_PPS = (GRAVITY_SPEED_MPS * PIXEL_PER_METER)
 
-TIME_PER_ACTION = 0.5
-ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
+TIME_PER_ACTION = 1.0
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 RD, LD, RU, LU, ZD, ZU, CD, CU, HP = range(9)
@@ -144,6 +144,7 @@ class JUMP:
         elif event == LU:
             self.dir += 1
         if self.jump == 0:
+            self.jump_max = self.y + 170
             self.jump = 1
 
     def exit(self, event):
@@ -160,15 +161,13 @@ class JUMP:
             self.add_event(HP)
         if self.jump == 1:
             if self.jump_on == 0:
-                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time) * 3
-                self.jump_dis += 1
-                if self.jump_dis == self.jump_max:
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time * 4.2)
+                if self.y >= self.jump_max:
                     self.jump_on = 1
                     self.jump_dis = 0
             elif self.jump_on == 1:
-                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time) - 1
-                self.jump_dis += 1
-                if self.jump_dis == 6:
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time / 3)
+                if self.y <= self.jump_max - 40:
                     self.jump_on = 2
                     self.jump_dis = 0
         elif self.jump == 0:
@@ -196,6 +195,7 @@ class ATK_JUMP:
         elif event == LU:
             self.dir += 1
         if self.jump == 0:
+            self.jump_max = self.y + 170
             self.jump = 1
 
     def exit(self, event):
@@ -210,15 +210,13 @@ class ATK_JUMP:
             self.add_event(HP)
         if self.jump == 1:
             if self.jump_on == 0:
-                self.y += 12
-                self.jump_dis += 1
-                if self.jump_dis == self.jump_max:
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time * 4.2)
+                if self.y >= self.jump_max:
                     self.jump_on = 1
                     self.jump_dis = 0
             elif self.jump_on == 1:
-                self.y += 3
-                self.jump_dis += 1
-                if self.jump_dis == 6:
+                self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time / 3)
+                if self.y <= self.jump_max - 40:
                     self.jump_on = 2
                     self.jump_dis = 0
         elif self.jump == 0:
@@ -281,7 +279,7 @@ class Main_char:
         self.jump = 0           # 0 점프안함 1 점프상태
         self.jump_dis = 0
         self.jump_on = 0
-        self.jump_max = 20
+        self.jump_max = self.y + 160
         self.death = 0
 
         self.event_que = []
@@ -334,7 +332,7 @@ class Main_char:
 
     def ground_collision(self, type, other):
         if type == 1:
-            self.y += 4
+            self.y += round(GRAVITY_SPEED_PPS * game_framework.frame_time)
             if self.jump_on != 0 and other.num != 55:
                 self.jump_on = 0
                 self.jump = 0

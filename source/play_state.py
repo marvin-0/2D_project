@@ -21,26 +21,26 @@ stage = 1
 char_x, char_y = 100, 90
 
 def enter():
-    global rockman, back_ground, ground, ground_amount, spike_up
+    global rockman, back_ground, ground, ground_amount, spike
     rockman = character_class.Main_char(char_x, char_y) # 875 - 850, 175 + 500
     back_ground = back_ground_class.Back_ground()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
     if stage == 1:
-        spike_up = [map_class.Spike() for s in range(20)]
+        spike = [map_class.Spike() for s in range(20)]
     elif stage == 2:
-        spike_up = [map_class.Spike() for s in range(50)]
+        spike = [map_class.Spike() for s in range(50)]
     if stage == 1:
-        stage1()
+        map_class.stage1(ground, spike)
     elif stage == 2:
-        stage2()
+        map_class.stage2(ground, spike)
     game_world.add_object(rockman, 2)
     game_world.add_object(back_ground, 0)
     game_world.add_objects(ground, 1)
-    game_world.add_objects(spike_up, 3)
+    game_world.add_objects(spike, 3)
 
     game_world.add_collision_pairs(rockman, ground, 'char:ground')
-    game_world.add_collision_pairs(rockman, spike_up, 'char:spike')
+    game_world.add_collision_pairs(rockman, spike, 'char:spike')
 
 def handle_events():
     global stage, char_x, char_y
@@ -67,8 +67,8 @@ def handle_events():
             rockman.handle_event(event)
 def exit():
     game_world.clear()
-    global rockman, back_ground, ground, ground_amount, spike_up
-    del rockman, back_ground, ground, ground_amount, spike_up
+    global rockman, back_ground, ground, ground_amount, spike
+    del rockman, back_ground, ground, ground_amount, spike
 
 def update():
     for game_object in game_world.all_objects():
@@ -81,7 +81,6 @@ def update():
         elif group == 'char:ground':
             collide_ground(a, b)
 
-    delay(0.01)
 
 def draw():
     clear_canvas()
@@ -138,88 +137,4 @@ def collide_ground(a, b):
             b.ground_collision(4, a)
 
     return False
-def stage1():
-    for i in range(9):
-        ground[i].y = 25
-        ground[i].x = 50 * i + 25
-    for i in range(9, 18):
-        ground[i].y = 25
-        ground[i].x = 625 + i % 9 * 50
-    for i in range(18, 33):
-        ground[i].y = 75 + i % 18 * 50
-        ground[i].x = 975
-    for i in range(33, 53):
-        ground[i].y = 175
-        ground[i].x = 875 - i % 33 * 50
 
-    ground[53].y = 175 + 150
-    ground[53].x = 875
-    ground[54].y = 175 + 150 + 50
-    ground[54].x = 875 - 100
-    ground[55].y = 175 + 350 # 갑툭튀
-    ground[55].x = 875 - 150
-    ground[55].show = 0
-    ground[56].y = 175 + 200
-    ground[56].x = 875 - 400
-    ground[57].y = 175 + 250
-    ground[57].x = 875 - 550
-    ground[58].y = 175 + 350
-    ground[58].x = 875 - 750
-    ground[59].y = 175 + 450
-    ground[59].x = 875 - 850
-    ground[60].y = 175 + 500
-    ground[60].x = 875 - 650
-    ground[61].y = 175 + 500  # 가시 설치지점
-    ground[61].x = 875 - 550
-    ground[62].y = 175 + 500  # 가시 이동지점
-    ground[62].x = 875 - 450
-    ground[63].y = 175 + 500
-    ground[63].x = 875 - 250
-    ground[64].y = 175 + 550
-    ground[64].x = 875 - 100
-
-    for i in range(16):
-        spike_up[i].y = 225
-        spike_up[i].x = 50 * i + 25
-    spike_up[16].y = 175 + 550
-    spike_up[16].x = 875 - 550
-    spike_up[17].y = 175 + 550
-    spike_up[17].x = 875 - 225
-
-def stage2():
-    ground[0].x = 25
-    ground[0].y = 25
-
-    ground[1].x = 25 + 100
-    ground[1].y = 25 + 150
-
-    ground[2].x = 25 + 250
-    ground[2].y = 25 + 200
-
-    ground[3].x = 25 + 350
-    ground[3].y = 25 + 350
-
-    ground[4].x = 25 + 500
-    ground[4].y = 25 + 400
-
-    ground[5].x = 25 + 650
-    ground[5].y = 25 + 450
-
-    ground[6].x = 25 + 850
-    ground[6].y = 25 + 550
-
-    ground[7].x = 25 + 950
-    ground[7].y = 25 + 650
-
-
-
-    for i in range(19):
-        spike_up[i].y = 25
-        spike_up[i].x = 50 * i + 75
-    for i in range(20, 37):
-        spike_up[i].y = 75 + i % 20 * 50
-        spike_up[i].x = -75
-        spike_up[i].angle = 270
-        spike_up[i].shot = 1
-    spike_up[37].x = 550
-    spike_up[37].y = 25 + 450
