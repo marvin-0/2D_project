@@ -2,6 +2,7 @@ from pico2d import *
 import game_world
 import game_framework
 import play_state
+from boss_class import Boss
 
 PIXEL_PER_METER = (6.0 / 0.1)
 SPIKE_SPEED_KMPH = 95.0
@@ -133,6 +134,8 @@ def stage_change():
         stage3(play_state.ground, play_state.spike)
     elif play_state.stage == 4:
         stage4(play_state.ground, play_state.spike)
+        boss = Boss()
+        game_world.add_object(boss, 2)
 def stage1(ground, spike):
     for i in range(9):
         ground[i].y = 25

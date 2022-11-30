@@ -351,7 +351,6 @@ class Main_char:
             bullet = Bullet(self.x, self.y, self.face_dir)
             game_world.add_object(bullet, 3)
             game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
-            game_world.add_collision_pairs(bullet, None, 'bullet:boss')
     def gravity(self):
         self.y -= GRAVITY_SPEED_PPS * game_framework.frame_time
         # self.y -= 4
