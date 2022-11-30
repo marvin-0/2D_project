@@ -1,6 +1,4 @@
 from pico2d import*
-import character_class
-import play_state
 import title_state
 from monster1_class import *
 import game_framework

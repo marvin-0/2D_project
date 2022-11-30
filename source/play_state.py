@@ -11,8 +11,6 @@ import map_class
 
 rockman = None
 
-bullet = []
-bullet_count = 0
 back_ground = None
 ground = None
 ground_amount = 0
@@ -26,10 +24,7 @@ def enter():
     back_ground = back_ground_class.Back_ground()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
-    if stage == 1:
-        spike = [map_class.Spike() for s in range(20)]
-    elif stage == 2:
-        spike = [map_class.Spike() for s in range(50)]
+    spike = [map_class.Spike() for s in range(50)]
     if stage == 1:
         map_class.stage1(ground, spike)
     elif stage == 2:
@@ -51,8 +46,7 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.push_state(pause_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
-            exit()
-            enter()
+            reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
             exit()
             stage = 1
@@ -67,8 +61,6 @@ def handle_events():
             rockman.handle_event(event)
 def exit():
     game_world.clear()
-    global rockman, back_ground, ground, ground_amount, spike
-    del rockman, back_ground, ground, ground_amount, spike
 
 def update():
     for game_object in game_world.all_objects():
@@ -97,9 +89,6 @@ def draw_world():
     for game_object in game_world.all_objects():
         game_object.draw()
 
-# def gravity():
-#     global rockman
-#     rockman.y -= 4
 def collide(a, b):
     la, ba, ra, ta = a.get_bb()
     lb, bb, rb, tb = b.get_bb()
@@ -137,4 +126,11 @@ def collide_ground(a, b):
             b.ground_collision(4, a)
 
     return False
+
+def reset_world():
+    if stage == 1:
+        map_class.stage1(ground, spike)
+    elif stage == 2:
+        map_class.stage2(ground, spike)
+    rockman.reset_char(char_x, char_y)
 

@@ -77,18 +77,18 @@ class Spike:
     def update(self):
         if play_state.stage == 1:
             if self.shot == 1:
-                self.y += round(SPIKE_SPEED_PPS * game_framework.frame_time)
+                self.y += SPIKE_SPEED_PPS * game_framework.frame_time
                 if self.y >= 950:
                     self.shot = 0
             if self.shot == 2:
-                self.x += 1
-                if self.x == 875 - 450:
-                    self.shot = round(SPIKE_SPEED_PPS * game_framework.frame_time)
+                self.x += SPIKE_SPEED_PPS * game_framework.frame_time / 5
+                if self.x >= 875 - 450:
+                    self.shot = 1
         elif play_state.stage == 2:
             if self.shot == 1:
-                self.x += round(SPIKE_SPEED_PPS * game_framework.frame_time) / 10
+                self.x += SPIKE_SPEED_PPS * game_framework.frame_time / 10
             elif self.shot == 2:
-                self.y += round(SPIKE_SPEED_PPS * game_framework.frame_time)
+                self.y += SPIKE_SPEED_PPS * game_framework.frame_time
                 if self.y >= 950:
                     self.shot = 0
 
@@ -180,7 +180,7 @@ def stage2(ground, spike):
         spike[i].x = 50 * i + 75
     for i in range(20, 37):
         spike[i].y = 75 + i % 20 * 50
-        spike[i].x = -100
+        spike[i].x = -250
         spike[i].angle = 270
         spike[i].shot = 1
     spike[37].x = 550
