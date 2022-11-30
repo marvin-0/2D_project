@@ -314,14 +314,16 @@ class Main_char:
         self.jump_on = 0
         self.jump_max = self.y + 160
         self.death = 0
+        self.death_count = 0
 
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
 
     def update(self):
+        if self.hp <= 0 and self.death == 0:
+            self.death_count += 1
         self.cur_state.do(self)
-
         if self.event_que:
             event = self.event_que.pop()
             self.cur_state.exit(self, event)
@@ -349,6 +351,7 @@ class Main_char:
             bullet = Bullet(self.x, self.y, self.face_dir)
             game_world.add_object(bullet, 3)
             game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
+            game_world.add_collision_pairs(bullet, None, 'bullet:boss')
     def gravity(self):
         self.y -= GRAVITY_SPEED_PPS * game_framework.frame_time
         # self.y -= 4
@@ -394,12 +397,18 @@ class Main_char:
         if play_state.stage == 1:
             if self.x > 1000:
                 play_state.stage = 2
-                play_state.char_x, play_state.char_y = 25, 90
+                play_state.save_x, play_state.save_y = 25, 90
                 self.reset_char(25, 90)
                 map_class.stage_change()
         elif play_state.stage == 2 and self.hp > 0 and self.y <= 0:
             play_state.stage = 3
             self.reset_char(500, 900)
             map_class.stage_change()
+        elif play_state.stage == 3 and self.hp > 0 and self.y <= 0:
+            play_state.stage = 4
+            self.reset_char(100, 900)
+            play_state.save_x, play_state.save_y = 100, 90
+            map_class.stage_change()
+
 
 

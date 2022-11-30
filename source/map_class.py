@@ -25,9 +25,10 @@ class Ground:
     def draw(self):
         if self.show == 1:
             self.image.clip_composite_draw(0, 0, 50, 50, self.angle * 3.141592 / 180, '', self.x, self.y)
-            # draw_rectangle(*self.get_bb())
     def update(self):
-        pass
+        if play_state.stage == 3:
+            if play_state.rockman.y <= 375:
+                play_state.spike[20].shot = 1
 
     def get_bb(self):
         return self.x - 25, self.y - 25, self.x + 25, self.y + 25
@@ -54,14 +55,16 @@ class Ground:
                         play_state.spike[i].shot = 1
                 elif self.num == 5:
                     play_state.spike[38].shot = 3
-        elif type == 2:
+        elif type == 2:# 아랫면
             if play_state.stage == 1:
                 if self.num == 55:
                     self.show = 1
-        elif type == 3: # 아랫면
+        elif type == 3:
             if play_state.stage == 1:
                 if self.num == 55 and self.show == 1:
                     self.x = 875 - 150
+            elif play_state.stage == 2:
+                self.show = 1
         elif type == 4:
             if play_state.stage == 1:
                 if self.num == 55 and self.show == 1:
@@ -106,6 +109,12 @@ class Spike:
                 self.angle = 180
                 if self.y < -50:
                     self.shot = 0
+        elif play_state.stage == 3:
+            if self.shot == 1:
+                self.x += SPIKE_SPEED_PPS * game_framework.frame_time / 2
+                if self.x > 1100:
+                    self.shot = 0
+
 
 
     def get_bb(self):
@@ -122,6 +131,8 @@ def stage_change():
         stage2(play_state.ground, play_state.spike)
     elif play_state.stage == 3:
         stage3(play_state.ground, play_state.spike)
+    elif play_state.stage == 4:
+        stage4(play_state.ground, play_state.spike)
 def stage1(ground, spike):
     for i in range(9):
         ground[i].y = 25
@@ -196,8 +207,6 @@ def stage2(ground, spike):
         ground[i].x = 975
         ground[i].show = 0
 
-
-
     for i in range(19):
         spike[i].y = 25
         spike[i].x = 50 * i + 75
@@ -240,6 +249,19 @@ def stage3(ground, spike):
     spike[20].x = 300
     spike[20].y = 350
     spike[20].angle = 270
+    for i in range(21, 28):
+        spike[i].x = 300 + i % 7 * 25
+        spike[i].y = 300 - i % 7 * 50
+    for i in range(28, 38):
+        spike[i].x = 450 + i % 10 * 25
+        spike[i].y = 300 - i % 10 * 50
+def stage4(ground, spike):
+    for i in range(20):
+        ground[i].y = 25
+        ground[i].x = 50 * i + 25
+    for i in range(20, 22):
+        ground[i].y = 875 - i % 2 * 50
+        ground[i].x = 300
 
 
 def clear_map(ground, spike):
