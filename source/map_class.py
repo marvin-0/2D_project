@@ -143,10 +143,13 @@ def stage1(ground, spike):
     for i in range(16):
         spike[i].y = 225
         spike[i].x = 50 * i + 25
+        spike[i].shot = 0
     spike[16].y = 175 + 550
     spike[16].x = 875 - 550
     spike[17].y = 175 + 550
     spike[17].x = 875 - 225
+    spike[16].shot = 0
+    spike[17].shot = 0
 
 def stage2(ground, spike):
     ground[0].x = 25
@@ -178,6 +181,7 @@ def stage2(ground, spike):
     for i in range(19):
         spike[i].y = 25
         spike[i].x = 50 * i + 75
+        spike[i].shot = 0
     for i in range(20, 37):
         spike[i].y = 75 + i % 20 * 50
         spike[i].x = -250
