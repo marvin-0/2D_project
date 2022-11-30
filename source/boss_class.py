@@ -37,7 +37,7 @@ class Boss:
         if self.hp <= 0:
             game_world.remove_object(self)
         self.bounce()
-        if self.pattern == 1:
+        if self.pattern >= 1:
             self.x += self.dir * self.speed * RUN_SPEED_PPS * game_framework.frame_time / random.randint(1, 4)
             self.y += self.up * RUN_SPEED_PPS * game_framework.frame_time
         if self.timer > 0:
@@ -47,6 +47,11 @@ class Boss:
                 self.frame = 0
         if self.hp <= 999:
             self.shot_fire()
+        if self.hp == 500 and self.pattern == 1:
+            monster = Monster(1000, 80)
+            game_world.add_object(monster, 2)
+            game_world.add_collision_pairs(server.rockman, monster, 'rockman:monster')
+            self.pattern = 2
 
     def bounce(self):
         if self.x < 50:
@@ -67,9 +72,11 @@ class Boss:
             if self.hp >= 900:
                 self.shot_timer = 10.0
                 self.speed = 1.2
-            elif self.hp >= 800:
+            elif self.hp >= 500:
                 self.shot_timer = 8.0
                 self.speed = 1.5
+            elif self.hp >= 100:
+                self.shot_timer = 6.0
             elif self.hp > 0:
                 self.shot_timer = 0.5
 
@@ -100,7 +107,7 @@ class Boss:
         if group == 'bullet:boss':
             if self.pattern == 0:
                 self.pattern = 1
-            elif self.pattern == 1:
+            elif self.pattern >= 1:
                 self.hp -= 10
                 self.timer = 0.5
 
@@ -134,3 +141,29 @@ class Boss_Fire:
     def reset(self):
         game_world.remove_object(self)
 
+class Monster:
+    def __init__(self, x, y):
+        self.image = load_image('sprite/monster1.png')
+        self.x, self.y = x, y
+        self.dir = 1
+        self.frame = 0
+
+    def draw(self):
+        if self.dir == 1:
+            self.image.clip_draw(int(self.frame) * 45, 35 * 1, 45, 35, self.x, self.y, 70, 70)
+        elif self.dir == -1:
+            self.image.clip_draw(int(self.frame) * 45, 35 * 3, 45, 35, self.x, self.y, 70, 70)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        if self.x > 1000:
+            self.dir = -1
+        elif self.x < 0:
+            self.dir = 1
+
+    def get_bb(self):
+        return self.x - 15, self.y - 25, self.x + 15, self.y + 25
+    def handle_collision(self, other, group):
+        pass

@@ -26,8 +26,8 @@ def enter():
     game_world.add_objects(server.ground, 1)
     game_world.add_objects(server.spike, 1)
 
-    game_world.add_collision_pairs(server.rockman, server.ground, 'char:ground')
-    game_world.add_collision_pairs(server.rockman, server.spike, 'char:spike')
+    game_world.add_collision_pairs(server.rockman, server.ground, 'rockman:ground')
+    game_world.add_collision_pairs(server.rockman, server.spike, 'rockman:spike')
 
 def handle_events():
     global stage, save_x, save_y
@@ -66,11 +66,11 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
     for a, b, group in game_world.all_collision_pairs():
-        if collide(a, b) and group != 'char:ground':
+        if collide(a, b) and group != 'rockman:ground':
             a.handle_collision(b, group)
             b.handle_collision(a, group)
             break
-        elif group == 'char:ground':
+        elif group == 'rockman:ground':
             collide_ground(a, b)
 
 

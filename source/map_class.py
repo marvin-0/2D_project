@@ -131,8 +131,8 @@ def reset_world():
     game_world.add_object(server.back_ground, 0)
     game_world.add_objects(server.ground, 1)
     game_world.add_objects(server.spike, 1)
-    game_world.add_collision_pairs(server.rockman, server.ground, 'char:ground')
-    game_world.add_collision_pairs(server.rockman, server.spike, 'char:spike')
+    game_world.add_collision_pairs(server.rockman, server.ground, 'rockman:ground')
+    game_world.add_collision_pairs(server.rockman, server.spike, 'rockman:spike')
 
     clear_map(server.ground, server.spike)
     if play_state.stage == 1:
@@ -143,7 +143,7 @@ def reset_world():
     elif play_state.stage == 4:
         play_state.stage = 4
         game_world.add_object(server.boss, 3)
-        game_world.add_collision_pairs(server.rockman, server.boss, 'boy:boss')
+        game_world.add_collision_pairs(server.rockman, server.boss, 'rockman:boss')
         stage4(server.ground, server.spike)
         server.boss.reset()
     server.rockman.reset(play_state.save_x, play_state.save_y)
@@ -159,7 +159,7 @@ def stage_change():
         stage4(server.ground, server.spike)
         server.boss = Boss()
         game_world.add_object(server.boss, 3)
-        game_world.add_collision_pairs(server.rockman, server.boss, 'boy:boss')
+        game_world.add_collision_pairs(server.rockman, server.boss, 'rockman:boss')
 def stage1(ground, spike):
     for i in range(9):
         ground[i].y = 25

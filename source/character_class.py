@@ -364,11 +364,13 @@ class Main_char:
     def get_bb_ground(self):
         return self.x - 10, self.y - 25, self.x + 10, self.y + 25
     def handle_collision(self, other, group):
-        if group == 'char:spike':
+        if group == 'rockman:spike':
             self.hp -= 50
-        if group == 'boy:boss':
+        if group == 'rockman:boss':
             self.hp -= 50
         if group == 'rockman:fire':
+            self.hp -= 50
+        if group == 'rockman:monster':
             self.hp -= 50
 
     def ground_collision(self, type, other):
