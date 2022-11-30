@@ -35,7 +35,7 @@ class Ground:
         pass
 
     def ground_collision(self, type, other):
-        if type == 1:
+        if type == 1: #윗면
             if play_state.stage == 1:
                 if self.num == 55:
                     self.show = 1
@@ -44,23 +44,28 @@ class Ground:
                     play_state.spike[6].shot = 1
                 elif self.num == 62:
                     play_state.spike[16].shot = 2
+                elif self.num == 61:
+                    play_state.spike[6].shot = 3
             if play_state.stage == 2:
                 if self.num == 3:
                     play_state.spike[6].shot = 2
+                elif self.num == 1:
+                    for i in range(20, 37):
+                        play_state.spike[i].shot = 1
+                elif self.num == 5:
+                    play_state.spike[38].shot = 3
         elif type == 2:
             if play_state.stage == 1:
                 if self.num == 55:
                     self.show = 1
-        elif type == 3:
+        elif type == 3: # 아랫면
             if play_state.stage == 1:
                 if self.num == 55 and self.show == 1:
                     self.x = 875 - 150
-            pass
         elif type == 4:
             if play_state.stage == 1:
                 if self.num == 55 and self.show == 1:
                     self.x = 875 - 150
-            pass
 
 
 class Spike:
@@ -80,16 +85,26 @@ class Spike:
                 self.y += SPIKE_SPEED_PPS * game_framework.frame_time
                 if self.y >= 950:
                     self.shot = 0
-            if self.shot == 2:
+            elif self.shot == 2:
                 self.x += SPIKE_SPEED_PPS * game_framework.frame_time / 5
                 if self.x >= 875 - 450:
                     self.shot = 1
+            elif self.shot == 3:
+                self.y -= SPIKE_SPEED_PPS * game_framework.frame_time
+                self.angle = 180
+                if self.y < -50:
+                    self.shot = 0
         elif play_state.stage == 2:
             if self.shot == 1:
                 self.x += SPIKE_SPEED_PPS * game_framework.frame_time / 10
             elif self.shot == 2:
                 self.y += SPIKE_SPEED_PPS * game_framework.frame_time
                 if self.y >= 950:
+                    self.shot = 0
+            elif self.shot == 3:
+                self.y -= SPIKE_SPEED_PPS * game_framework.frame_time
+                self.angle = 180
+                if self.y < -50:
                     self.shot = 0
 
 
@@ -99,7 +114,14 @@ class Spike:
     def handle_collision(self, other, group):
         pass
 
-
+def stage_change():
+    clear_map(play_state.ground, play_state.spike)
+    if play_state.stage == 1:
+        stage1(play_state.ground, play_state.spike)
+    elif play_state.stage == 2:
+        stage2(play_state.ground, play_state.spike)
+    elif play_state.stage == 3:
+        stage3(play_state.ground, play_state.spike)
 def stage1(ground, spike):
     for i in range(9):
         ground[i].y = 25
@@ -143,6 +165,7 @@ def stage1(ground, spike):
     for i in range(16):
         spike[i].y = 225
         spike[i].x = 50 * i + 25
+        spike[i].angle = 0
         spike[i].shot = 0
     spike[16].y = 175 + 550
     spike[16].x = 875 - 550
@@ -154,27 +177,24 @@ def stage1(ground, spike):
 def stage2(ground, spike):
     ground[0].x = 25
     ground[0].y = 25
-
     ground[1].x = 25 + 100
     ground[1].y = 25 + 150
-
     ground[2].x = 25 + 250
     ground[2].y = 25 + 200
-
     ground[3].x = 25 + 350
     ground[3].y = 25 + 350
-
     ground[4].x = 25 + 500
     ground[4].y = 25 + 400
-
     ground[5].x = 25 + 650
     ground[5].y = 25 + 450
-
     ground[6].x = 25 + 850
     ground[6].y = 25 + 550
-
     ground[7].x = 25 + 950
     ground[7].y = 25 + 650
+    for i in range(8, 23):
+        ground[i].y = 75 + i % 15 * 50
+        ground[i].x = 975
+        ground[i].show = 0
 
 
 
@@ -186,6 +206,41 @@ def stage2(ground, spike):
         spike[i].y = 75 + i % 20 * 50
         spike[i].x = -250
         spike[i].angle = 270
-        spike[i].shot = 1
+        spike[i].shot = 0
     spike[37].x = 550
     spike[37].y = 25 + 450
+
+    spike[38].x = 25 + 650
+    spike[38].y = 875
+    spike[38].angle = 180
+    spike[38].shot = 0
+
+def stage3(ground, spike):
+    for i in range(0, 18):
+        ground[i].y = 25 + i % 18 * 50
+        ground[i].x = 250
+    for i in range(18, 36):
+        ground[i].y = 25 + i % 18 * 50
+        ground[i].x = 750
+
+    for i in range(0, 8):
+        spike[i].x = 300 + i * 50
+        spike[i].y = 700
+    for i in range(8, 14):
+        spike[i].x = 700 - i % 6 * 50
+        spike[i].y = 600 - i % 6 * 50
+        spike[i].angle = 90
+    for i in range(14, 19):
+        spike[i].x = 500 - i % 5 * 50
+        spike[i].y = 650 - i % 5 * 50
+        spike[i].angle = 270
+
+
+def clear_map(ground, spike):
+    for g in ground:
+        g.x, g.y = 2000, 1000
+        g.show = 1
+    for s in spike:
+        s.x, s.y = 2000, 1000
+        s.shot = 0
+        s.angle = 0

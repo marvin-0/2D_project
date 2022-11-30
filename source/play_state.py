@@ -24,7 +24,7 @@ def enter():
     back_ground = back_ground_class.Back_ground()
     ground_amount = 100
     ground = [map_class.Ground() for m in range(ground_amount)]
-    spike = [map_class.Spike() for s in range(50)]
+    spike = [map_class.Spike() for s in range(100)]
     if stage == 1:
         map_class.stage1(ground, spike)
     elif stage == 2:
@@ -32,7 +32,7 @@ def enter():
     game_world.add_object(rockman, 2)
     game_world.add_object(back_ground, 0)
     game_world.add_objects(ground, 1)
-    game_world.add_objects(spike, 3)
+    game_world.add_objects(spike, 1)
 
     game_world.add_collision_pairs(rockman, ground, 'char:ground')
     game_world.add_collision_pairs(rockman, spike, 'char:spike')
@@ -48,15 +48,17 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
             reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
-            exit()
             stage = 1
-            char_x, char_y = 100, 90
-            enter()
+            reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
-            exit()
             stage = 2
             char_x, char_y = 25, 90
-            enter()
+            reset_world()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_3):
+            stage = 3
+            char_x, char_y = 25, 90
+            rockman.reset_char(500, 900)
+            map_class.stage_change()
         else:
             rockman.handle_event(event)
 def exit():
@@ -128,9 +130,12 @@ def collide_ground(a, b):
     return False
 
 def reset_world():
+    global stage
+    map_class.clear_map(ground, spike)
     if stage == 1:
         map_class.stage1(ground, spike)
-    elif stage == 2:
+    elif stage == 2 or stage == 3:
+        stage = 2
         map_class.stage2(ground, spike)
     rockman.reset_char(char_x, char_y)
 

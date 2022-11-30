@@ -40,6 +40,7 @@ class Bullet:
 
     def handle_collision(self, other, group):
         if group == 'bullet:ground':
-            game_world.remove_object(self)
-            Bullet.count -= 1
+            if other.show == 1:
+                game_world.remove_object(self)
+                Bullet.count -= 1
 

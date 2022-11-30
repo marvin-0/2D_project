@@ -2,6 +2,7 @@ from pico2d import*
 import game_world
 import game_framework
 import play_state
+import map_class
 from bullet_class import Bullet
 
 PIXEL_PER_METER = (6.0 / 0.1)
@@ -179,6 +180,8 @@ class JUMP:
         if self.jump == 0:
             self.jump_max = self.y + 170
             self.jump = 1
+        if self.dir != 0:
+            self.face_dir = self.dir
 
     def exit(self, event):
         if self.dir != 0:
@@ -239,6 +242,8 @@ class ATK_JUMP:
         if self.jump == 0:
             self.jump_max = self.y + 170
             self.jump = 1
+        if self.dir != 0:
+            self.face_dir = self.dir
 
     def exit(self, event):
         if self.dir != 0:
@@ -323,11 +328,11 @@ class Main_char:
             try:
                 self.cur_state = next_state[self.cur_state][event]
             except KeyError:
-                # 어떤 상태에서? 어떤 이벤트때문에 문제가 발생했는지??
                 print(self.cur_state, event_name[event])
 
             self.cur_state.enter(self, event)
         self.gravity()
+        self.stage_change()
 
     def draw(self):
         self.cur_state.draw(self)
@@ -368,10 +373,14 @@ class Main_char:
             if self.jump == 1:
                 self.jump_on = 2
         elif type == 3:
-            if other.show == 1:
+            if other.show == 0 and play_state.stage == 1:
+                pass
+            else:
                 self.x -= RUN_SPEED_PPS * game_framework.frame_time
         elif type == 4:
-            if other.show == 1:
+            if other.show == 0 and play_state.stage == 1:
+                pass
+            else:
                 self.x += RUN_SPEED_PPS * game_framework.frame_time
 
     def reset_char(self, x, y):
@@ -380,4 +389,17 @@ class Main_char:
         self.death = 0
         self.hp = 50
         self.frame = 0
+
+    def stage_change(self):
+        if play_state.stage == 1:
+            if self.x > 1000:
+                play_state.stage = 2
+                play_state.char_x, play_state.char_y = 25, 90
+                self.reset_char(25, 90)
+                map_class.stage_change()
+        elif play_state.stage == 2 and self.hp > 0 and self.y <= 0:
+            play_state.stage = 3
+            self.reset_char(500, 900)
+            map_class.stage_change()
+
 
