@@ -204,7 +204,7 @@ def stage2(ground, spike):
         spike[i].shot = 0
     for i in range(20, 37):
         spike[i].y = 75 + i % 20 * 50
-        spike[i].x = -250
+        spike[i].x = -100
         spike[i].angle = 270
         spike[i].shot = 0
     spike[37].x = 550
@@ -234,6 +234,12 @@ def stage3(ground, spike):
         spike[i].x = 500 - i % 5 * 50
         spike[i].y = 650 - i % 5 * 50
         spike[i].angle = 270
+    spike[19].x = 300
+    spike[19].y = 400
+    spike[19].angle = 270
+    spike[20].x = 300
+    spike[20].y = 350
+    spike[20].angle = 270
 
 
 def clear_map(ground, spike):
