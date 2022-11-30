@@ -1,41 +1,33 @@
-from pico2d import*
+from pico2d import *
+import server
 import game_framework
 import pause_state
 import game_world
 
 import character_class
-import bullet_class
 import back_ground_class
 import map_class
 
-
-rockman = None
-
-back_ground = None
-ground = None
-ground_amount = 0
-spike_up = None
 stage = 1
 save_x, save_y = 100, 90
 
 def enter():
-    global rockman, back_ground, ground, ground_amount, spike
-    rockman = character_class.Main_char(save_x, save_y) # 875 - 850, 175 + 500
-    back_ground = back_ground_class.Back_ground()
-    ground_amount = 100
-    ground = [map_class.Ground() for m in range(ground_amount)]
-    spike = [map_class.Spike() for s in range(100)]
+    server.rockman = character_class.Main_char(save_x, save_y) # 875 - 850, 175 + 500
+    server.back_ground = back_ground_class.Back_ground()
+    server.ground_amount = 100
+    server.ground = [map_class.Ground() for m in range(server.ground_amount)]
+    server.spike = [map_class.Spike() for s in range(100)]
     if stage == 1:
-        map_class.stage1(ground, spike)
+        map_class.stage1(server.ground, server.spike)
     elif stage == 2:
-        map_class.stage2(ground, spike)
-    game_world.add_object(rockman, 2)
-    game_world.add_object(back_ground, 0)
-    game_world.add_objects(ground, 1)
-    game_world.add_objects(spike, 1)
+        map_class.stage2(server.ground, server.spike)
+    game_world.add_object(server.rockman, 2)
+    game_world.add_object(server.back_ground, 0)
+    game_world.add_objects(server.ground, 1)
+    game_world.add_objects(server.spike, 1)
 
-    game_world.add_collision_pairs(rockman, ground, 'char:ground')
-    game_world.add_collision_pairs(rockman, spike, 'char:spike')
+    game_world.add_collision_pairs(server.rockman, server.ground, 'char:ground')
+    game_world.add_collision_pairs(server.rockman, server.spike, 'char:spike')
 
 def handle_events():
     global stage, save_x, save_y
@@ -46,27 +38,27 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.push_state(pause_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
-            reset_world()
+            map_class.reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
             stage = 1
             save_x, save_y = 100, 90
-            reset_world()
+            map_class.reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
             stage = 2
             save_x, save_y = 25, 90
-            reset_world()
+            map_class.reset_world()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_3):
             stage = 3
             save_x, save_y = 25, 90
-            rockman.reset_char(500, 900)
+            server.rockman.reset(500, 900)
             map_class.stage_change()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_4):
             stage = 4
             save_x, save_y = 50, 90
-            rockman.reset_char(100, 900)
+            server.rockman.reset(100, 900)
             map_class.stage_change()
         else:
-            rockman.handle_event(event)
+            server.rockman.handle_event(event)
 def exit():
     game_world.clear()
 
@@ -135,16 +127,5 @@ def collide_ground(a, b):
 
     return False
 
-def reset_world():
-    global stage
-    map_class.clear_map(ground, spike)
-    if stage == 1:
-        map_class.stage1(ground, spike)
-    elif stage == 2 or stage == 3:
-        stage = 2
-        map_class.stage2(ground, spike)
-    elif stage == 4:
-        stage = 4
-        map_class.stage4(ground, spike)
-    rockman.reset_char(save_x, save_y)
+
 

@@ -3,6 +3,7 @@ import game_world
 import game_framework
 import play_state
 import map_class
+import server
 from bullet_class import Bullet
 
 PIXEL_PER_METER = (6.0 / 0.1)
@@ -350,18 +351,24 @@ class Main_char:
         if self.hp > 0:
             bullet = Bullet(self.x, self.y, self.face_dir)
             game_world.add_object(bullet, 3)
-            game_world.add_collision_pairs(bullet, play_state.ground, 'bullet:ground')
+            game_world.add_collision_pairs(bullet, server.ground, 'bullet:ground')
+            if play_state.stage == 4 and server.boss.hp > 0:
+                game_world.add_collision_pairs(bullet, server.boss, 'bullet:boss')
     def gravity(self):
         self.y -= GRAVITY_SPEED_PPS * game_framework.frame_time
         # self.y -= 4
         if self.y <= -10:
             self.hp = 0
     def get_bb(self):
-        return self.x, self.y, self.x, self.y
+        return self.x - 5, self.y - 5, self.x + 5, self.y + 5
     def get_bb_ground(self):
         return self.x - 10, self.y - 25, self.x + 10, self.y + 25
     def handle_collision(self, other, group):
         if group == 'char:spike':
+            self.hp -= 50
+        if group == 'boy:boss':
+            self.hp -= 50
+        if group == 'rockman:fire':
             self.hp -= 50
 
     def ground_collision(self, type, other):
@@ -385,27 +392,28 @@ class Main_char:
             else:
                 self.x += RUN_SPEED_PPS * game_framework.frame_time
 
-    def reset_char(self, x, y):
+    def reset(self, x, y):
         self.x = x
         self.y = y
         self.death = 0
         self.hp = 50
         self.frame = 0
+        Bullet.count = 0
 
     def stage_change(self):
         if play_state.stage == 1:
             if self.x > 1000:
                 play_state.stage = 2
                 play_state.save_x, play_state.save_y = 25, 90
-                self.reset_char(25, 90)
+                self.reset(25, 90)
                 map_class.stage_change()
         elif play_state.stage == 2 and self.hp > 0 and self.y <= 0:
             play_state.stage = 3
-            self.reset_char(500, 900)
+            self.reset(500, 900)
             map_class.stage_change()
         elif play_state.stage == 3 and self.hp > 0 and self.y <= 0:
             play_state.stage = 4
-            self.reset_char(100, 900)
+            self.reset(100, 900)
             play_state.save_x, play_state.save_y = 100, 90
             map_class.stage_change()
 

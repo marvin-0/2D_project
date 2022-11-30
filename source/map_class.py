@@ -1,6 +1,7 @@
 from pico2d import *
 import game_world
 import game_framework
+import server
 import play_state
 from boss_class import Boss
 
@@ -28,8 +29,8 @@ class Ground:
             self.image.clip_composite_draw(0, 0, 50, 50, self.angle * 3.141592 / 180, '', self.x, self.y)
     def update(self):
         if play_state.stage == 3:
-            if play_state.rockman.y <= 375:
-                play_state.spike[20].shot = 1
+            if server.rockman.y <= 375:
+                server.spike[20].shot = 1
 
     def get_bb(self):
         return self.x - 25, self.y - 25, self.x + 25, self.y + 25
@@ -43,19 +44,19 @@ class Ground:
                     self.show = 1
                     self.x = 10000
                 elif self.num == 57:
-                    play_state.spike[6].shot = 1
+                    server.spike[6].shot = 1
                 elif self.num == 62:
-                    play_state.spike[16].shot = 2
+                    server.spike[16].shot = 2
                 elif self.num == 61:
-                    play_state.spike[6].shot = 3
+                    server.spike[6].shot = 3
             if play_state.stage == 2:
                 if self.num == 3:
-                    play_state.spike[6].shot = 2
+                    server.spike[6].shot = 2
                 elif self.num == 1:
                     for i in range(20, 37):
-                        play_state.spike[i].shot = 1
+                        server.spike[i].shot = 1
                 elif self.num == 5:
-                    play_state.spike[38].shot = 3
+                    server.spike[38].shot = 3
         elif type == 2:# 아랫면
             if play_state.stage == 1:
                 if self.num == 55:
@@ -124,18 +125,41 @@ class Spike:
     def handle_collision(self, other, group):
         pass
 
-def stage_change():
-    clear_map(play_state.ground, play_state.spike)
+def reset_world():
+    game_world.clear()
+    game_world.add_object(server.rockman, 2)
+    game_world.add_object(server.back_ground, 0)
+    game_world.add_objects(server.ground, 1)
+    game_world.add_objects(server.spike, 1)
+    game_world.add_collision_pairs(server.rockman, server.ground, 'char:ground')
+    game_world.add_collision_pairs(server.rockman, server.spike, 'char:spike')
+
+    clear_map(server.ground, server.spike)
     if play_state.stage == 1:
-        stage1(play_state.ground, play_state.spike)
-    elif play_state.stage == 2:
-        stage2(play_state.ground, play_state.spike)
-    elif play_state.stage == 3:
-        stage3(play_state.ground, play_state.spike)
+        stage1(server.ground, server.spike)
+    elif play_state.stage == 2 or play_state.stage == 3:
+        play_state.stage = 2
+        stage2(server.ground, server.spike)
     elif play_state.stage == 4:
-        stage4(play_state.ground, play_state.spike)
-        boss = Boss()
-        game_world.add_object(boss, 2)
+        play_state.stage = 4
+        game_world.add_object(server.boss, 3)
+        game_world.add_collision_pairs(server.rockman, server.boss, 'boy:boss')
+        stage4(server.ground, server.spike)
+        server.boss.reset()
+    server.rockman.reset(play_state.save_x, play_state.save_y)
+def stage_change():
+    clear_map(server.ground, server.spike)
+    if play_state.stage == 1:
+        stage1(server.ground, server.spike)
+    elif play_state.stage == 2:
+        stage2(server.ground, server.spike)
+    elif play_state.stage == 3:
+        stage3(server.ground, server.spike)
+    elif play_state.stage == 4:
+        stage4(server.ground, server.spike)
+        server.boss = Boss()
+        game_world.add_object(server.boss, 3)
+        game_world.add_collision_pairs(server.rockman, server.boss, 'boy:boss')
 def stage1(ground, spike):
     for i in range(9):
         ground[i].y = 25

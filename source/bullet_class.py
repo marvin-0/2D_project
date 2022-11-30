@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import game_world
+import random
 
 PIXEL_PER_METER = (6.0 / 0.1)
 SHOT_SPEED_KMPH = 50.0
@@ -25,7 +26,6 @@ class Bullet:
 
     def draw(self):
         self.image.draw(self.x, self.y, 20, 10)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.x += SHOT_SPEED_PPS * game_framework.frame_time * self.dir
@@ -35,6 +35,7 @@ class Bullet:
         if self.amount > 5:
             game_world.remove_object(self)
             Bullet.count -= 1
+
     def get_bb(self):
         return self.x - 5, self.y - 5, self.x + 5, self.y + 5
 
@@ -43,4 +44,7 @@ class Bullet:
             if other.show == 1:
                 game_world.remove_object(self)
                 Bullet.count -= 1
+        elif group == 'bullet:boss':
+            game_world.remove_object(self)
+            Bullet.count -= 1
 
