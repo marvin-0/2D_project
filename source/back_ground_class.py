@@ -12,7 +12,8 @@ class Back_ground:
 
     def draw(self):
         self.image.draw(500, 450)
-        self.font.draw(880, 870, 'Time  : %d' % (get_time() - self.start_time), (0, 0, 0))
+        self.font.draw(880, 870, 'Time  : %d' % (server.time), (0, 0, 0))
         self.font.draw(880, 850, 'Death : %d' % (server.rockman.death_count), (0, 0, 0))
     def update(self):
+        server.time = int(get_time() - self.start_time)
         pass

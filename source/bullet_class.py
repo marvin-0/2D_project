@@ -26,7 +26,7 @@ class Bullet:
         self.amount = Bullet.count
         if Bullet.shot_sound == None:
             Bullet.shot_sound = load_wav('sound/shot.wav')
-            Bullet.shot_sound.set_volume(32)
+            Bullet.shot_sound.set_volume(50)
         if self.amount <= 5:
             Bullet.shot_sound.play()
 

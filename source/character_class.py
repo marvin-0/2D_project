@@ -319,9 +319,9 @@ class Main_char:
         self.death = 0
         self.death_count = 0
         self.jump_sound = load_wav('sound/jump.wav')
-        self.jump_sound.set_volume(32)
+        self.jump_sound.set_volume(50)
         self.death_sound = load_wav('sound/death.wav')
-        self.death_sound.set_volume(32)
+        self.death_sound.set_volume(50)
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)

@@ -8,10 +8,13 @@ import character_class
 import back_ground_class
 import map_class
 
-stage = 1
-save_x, save_y = 100, 90
+stage = None
+save_x, save_y = 0, 0
 
 def enter():
+    global stage,save_x, save_y
+    stage = 1
+    save_x, save_y = 100, 90
     server.rockman = character_class.Main_char(save_x, save_y) # 875 - 850, 175 + 500
     server.back_ground = back_ground_class.Back_ground()
     server.ground_amount = 100

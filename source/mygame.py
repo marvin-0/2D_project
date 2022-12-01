@@ -1,5 +1,6 @@
 from pico2d import*
 import title_state
+import clear_state
 import game_framework
 
 open_canvas(1000, 900)
