@@ -13,6 +13,7 @@ SHOT_SPEED_PPS = (SHOT_SPEED_MPS * PIXEL_PER_METER)
 
 class Bullet:
     image = None
+    shot_sound = None
     count = 0
 
     def __init__(self, x = 1000, y = 1000, velocity = 1):
@@ -23,6 +24,11 @@ class Bullet:
         self.speed = 10
         Bullet.count += 1
         self.amount = Bullet.count
+        if Bullet.shot_sound == None:
+            Bullet.shot_sound = load_wav('sound/shot.wav')
+            Bullet.shot_sound.set_volume(32)
+        if self.amount <= 5:
+            Bullet.shot_sound.play()
 
     def draw(self):
         self.image.draw(self.x, self.y, 20, 10)

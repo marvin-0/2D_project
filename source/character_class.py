@@ -181,6 +181,7 @@ class JUMP:
         if self.jump == 0:
             self.jump_max = self.y + 170
             self.jump = 1
+            self.jump_sound.play()
         if self.dir != 0:
             self.face_dir = self.dir
 
@@ -243,6 +244,7 @@ class ATK_JUMP:
         if self.jump == 0:
             self.jump_max = self.y + 170
             self.jump = 1
+            self.jump_sound.play()
         if self.dir != 0:
             self.face_dir = self.dir
 
@@ -316,14 +318,17 @@ class Main_char:
         self.jump_max = self.y + 160
         self.death = 0
         self.death_count = 0
-
+        self.jump_sound = load_wav('sound/jump.wav')
+        self.jump_sound.set_volume(32)
+        self.death_sound = load_wav('sound/death.wav')
+        self.death_sound.set_volume(32)
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
 
     def update(self):
         if self.hp <= 0 and self.death == 0:
-            self.death_count += 1
+            self.death_sound.play()
         self.cur_state.do(self)
         if self.event_que:
             event = self.event_que.pop()

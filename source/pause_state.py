@@ -1,6 +1,9 @@
 from pico2d import *
 import game_framework
 import play_state
+import title_state
+import game_world
+import server
 
 image1 = None
 image2 = None
@@ -14,6 +17,8 @@ def enter():
     mod = 1
 
 def exit():
+    game_world.clear()
+    server.back_ground.stage_bgm.stop()
     global image1, image2
     del image1, image2
 
@@ -43,10 +48,4 @@ def handle_events():
                     if mod == 1:
                         game_framework.pop_state()
                     else:
-                        game_framework.quit()
-
-
-
-
-
-
+                        game_framework.change_state(title_state)

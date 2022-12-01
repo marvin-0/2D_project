@@ -17,10 +17,7 @@ def enter():
     server.ground_amount = 100
     server.ground = [map_class.Ground() for m in range(server.ground_amount)]
     server.spike = [map_class.Spike() for s in range(100)]
-    if stage == 1:
-        map_class.stage1(server.ground, server.spike)
-    elif stage == 2:
-        map_class.stage2(server.ground, server.spike)
+    map_class.stage_change()
     game_world.add_object(server.rockman, 2)
     game_world.add_object(server.back_ground, 0)
     game_world.add_objects(server.ground, 1)
@@ -42,11 +39,13 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
             stage = 1
             save_x, save_y = 100, 90
-            map_class.reset_world()
+            server.rockman.reset(100, 90)
+            map_class.stage_change()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
             stage = 2
             save_x, save_y = 25, 90
-            map_class.reset_world()
+            server.rockman.reset(25, 90)
+            map_class.stage_change()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_3):
             stage = 3
             save_x, save_y = 25, 90

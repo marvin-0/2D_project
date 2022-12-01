@@ -2,10 +2,11 @@ import game_framework
 from pico2d import *
 import play_state
 image = None
-
+bgm = None
 def enter():
     global image
     image = load_image('sprite/title_screen.png')
+    bgm =
 
 def exit():
     global image
@@ -27,5 +28,5 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(500,450, 1000, 1000)
+    image.draw(500,450, 1000, 900)
     update_canvas()

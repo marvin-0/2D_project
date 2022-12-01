@@ -1,6 +1,5 @@
 from pico2d import*
 import title_state
-from monster1_class import *
 import game_framework
 
 open_canvas(1000, 900)

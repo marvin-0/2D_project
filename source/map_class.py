@@ -147,6 +147,7 @@ def reset_world():
         stage4(server.ground, server.spike)
         server.boss.reset()
     server.rockman.reset(play_state.save_x, play_state.save_y)
+    server.rockman.death_count += 1
 def stage_change():
     clear_map(server.ground, server.spike)
     if play_state.stage == 1:

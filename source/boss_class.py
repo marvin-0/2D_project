@@ -32,6 +32,8 @@ class Boss:
         self.timer = 0.0
         self.shot_timer = 0.0
         self.speed = 1
+        self.hit_sound = load_wav('sound/boss_hit.wav')
+        self.hit_sound.set_volume(20)
 
     def update(self):
         if self.hp <= 0:
@@ -110,17 +112,23 @@ class Boss:
             elif self.pattern >= 1:
                 self.hp -= 10
                 self.timer = 0.5
+            self.hit_sound.play()
 
 
 class Boss_Fire:
     image = None
+    sound = None
     def __init__(self, x = 1000, y = 1000):
         if Boss_Fire.image == None:
             Boss_Fire.image = load_image('sprite/boss_fire.png')
+        if Boss_Fire.sound == None:
+            Boss_Fire.sound = load_wav('sound/boss_shot.wav')
         self.x, self.y = x, y
         self.dir = math.atan2(server.rockman.y - self.y, server.rockman.x - self.x)
         self.frame = 0
         self.speed = SHOT_SPEED_PPS
+        Boss_Fire.sound.play()
+
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
