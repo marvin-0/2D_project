@@ -1,4 +1,5 @@
 import server
+import play_state
 from pico2d import *
 
 class Back_ground:
@@ -14,6 +15,8 @@ class Back_ground:
         self.image.draw(500, 450)
         self.font.draw(880, 870, 'Time  : %d' % (server.time), (0, 0, 0))
         self.font.draw(880, 850, 'Death : %d' % (server.rockman.death_count), (0, 0, 0))
+        if play_state.stage == 1:
+            self.font.draw(50, 850, 'z: attack, c: jump,  arrow key: move', (0, 0, 0))
     def update(self):
         server.time = int(get_time() - self.start_time)
         pass

@@ -9,10 +9,12 @@ select_sound = None
 chose_sound = None
 mod = 0
 font = None
+font2 = None
 def enter():
-    global image, font, bgm, select_sound, chose_sound
+    global image, font, bgm, select_sound, chose_sound, font2
     image = load_image('sprite/title_screen.png')
     font = load_font('font/neodgm.ttf', 40)
+    font2 = load_font('font/neodgm.ttf', 30)
     bgm = load_music('music/title_bgm.mp3')
     bgm.set_volume(32)
     bgm.repeat_play()
@@ -80,12 +82,15 @@ def draw():
     elif mod == 1:
         image = load_image('sprite/title_screen2.png')
         image.draw(500, 450, 1000, 900)
+        font2.draw(500, 850, 'z : select, esc : quit, x : back', (255, 255, 255))
     elif mod == 2:
         image = load_image('sprite/title_screen3.png')
         image.draw(500, 450, 1000, 900)
+        font2.draw(500, 850, 'z : select, esc : quit, x : back', (255, 255, 255))
     elif mod == 3:
         image = load_image('sprite/title_screen4.png')
         image.draw(500, 450, 1000, 900)
+        font2.draw(500, 850, 'z : select, esc : quit, x : back', (255, 255, 255))
     elif mod == 4:
         image = load_image('sprite/ranking_screen.png')
         image.draw(500, 450)
