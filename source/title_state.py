@@ -45,7 +45,7 @@ def handle_events():
         else:
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.quit()
-            elif (event.type, event.key, mod) == (SDL_KEYDOWN, SDLK_SPACE, 0):
+            elif (event.type, mod) == (SDL_KEYDOWN, 0):
                 mod = 1
             elif event.type == SDL_KEYDOWN and mod > 0:
                 match event.key:
