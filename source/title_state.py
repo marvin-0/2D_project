@@ -27,7 +27,7 @@ def enter():
             server.score = pickle.load(f)
     except FileNotFoundError:
         create_save()
-    server.score.sort(key=lambda x:x[1])
+    server.score.sort(key=lambda x:(x[1], x[0]))
 
 
 def exit():
