@@ -39,26 +39,13 @@ def handle_events():
             game_framework.push_state(pause_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_r):
             map_class.reset_world()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
-            stage = 1
-            save_x, save_y = 100, 90
-            server.rockman.reset(100, 90)
-            map_class.stage_change()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
-            stage = 2
-            save_x, save_y = 25, 90
-            server.rockman.reset(25, 90)
-            map_class.stage_change()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_3):
-            stage = 3
-            save_x, save_y = 25, 90
-            server.rockman.reset(500, 900)
-            map_class.stage_change()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_4):
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):  # 보스룸으로 바로 순간이동 치트
             stage = 4
             save_x, save_y = 50, 90
             server.rockman.reset(100, 900)
             map_class.stage_change()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_q): # 보스 체력 10만드는 치트
+            server.boss.cheat_on()
         else:
             server.rockman.handle_event(event)
 def exit():

@@ -4,7 +4,6 @@ import game_world
 import random
 import server
 import clear_state
-import title_state
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 50.0  # Km / Hour
@@ -125,6 +124,8 @@ class Boss:
                 self.hp -= 10
                 self.timer = 0.5
             self.hit_sound.play()
+    def cheat_on(self):
+        self.hp = 10
 
 
 class Boss_Fire:
@@ -159,6 +160,7 @@ class Boss_Fire:
 
     def reset(self):
         game_world.remove_object(self)
+
 
 class Monster:
     def __init__(self, x, y):

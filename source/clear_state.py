@@ -40,7 +40,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         else:
-            if (event.type, event.key) == (SDL_KEYDOWN, SDLK_z):
+            if (event.type, event.key) == (SDL_KEYDOWN, SDLK_x):
                 game_framework.change_state(title_state)
 
 
@@ -54,4 +54,5 @@ def draw():
     font.draw(150, 750, 'Congratulations', (0, 0, 0))
     font.draw(270, 500, 'Time  : %d' % (server.time), (0, 0, 0))
     font.draw(270, 300, 'Death : %d' % (server.rockman.death_count), (0, 0, 0))
+    font.draw(310, 100, 'Press x', (0, 0, 0))
     update_canvas()

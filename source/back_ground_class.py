@@ -16,7 +16,9 @@ class Back_ground:
         self.font.draw(880, 870, 'Time  : %d' % (server.time), (0, 0, 0))
         self.font.draw(880, 850, 'Death : %d' % (server.rockman.death_count), (0, 0, 0))
         if play_state.stage == 1:
-            self.font.draw(50, 850, 'z: attack, c: jump,  arrow key: move', (0, 0, 0))
+            self.font.draw(20, 870, 'z: attack, c: jump,  arrow key: move, 1: boss teleportation', (0, 0, 0))
+        elif play_state.stage == 4:
+            self.font.draw(20, 870, 'q : boss hp 10', (0, 0, 0))
     def update(self):
         server.time = int(get_time() - self.start_time)
         pass
